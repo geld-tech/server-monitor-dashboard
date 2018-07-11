@@ -54,7 +54,7 @@ def page_not_found(e):
 def get_server_temperature(self):
     try:
         with open("/sys/class/thermal/thermal_zone0/temp") as temp_file:
-            cpu_temp = int(temp_file.read())/1000
+            cpu_temp = int(temp_file.read()) / 1000
         return cpu_temp
     except Exception, e:
         logger.error('Error reading temperature: %s' % e)
