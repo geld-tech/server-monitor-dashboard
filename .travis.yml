@@ -64,7 +64,7 @@ install:
   # Flask application
   - cd sources/server/
   # Enforce syntax errors, undefined names, and other other potential issues with coding style
-  - flake8 . --exclude=dependencies --count --show-source --statistics --max-line-length=159
+  - flake8 . --exclude=dependencies --count --show-source --statistics --max-line-length=159 --max-complexity=10
   - cd ../..
 
 before_script:
