@@ -6,6 +6,10 @@
 import ConfigParser
 import logging
 import logging.handlers
+import os
+import platform
+import psutil
+import time
 import socket
 from optparse import OptionParser
 from flask import Flask, render_template, jsonify
@@ -66,6 +70,57 @@ def get_server_hostname(self):
         return hostname
     except Exception, e:
         logger.error('Error reading hostname: %s' % e)
+        return False
+
+
+def get_server_platform(self):
+    try:
+        platform = platform.platform()
+        return platform
+    except Exception, e:
+        logger.error('Error reading plaftorm: %s' % e)
+        return False
+
+
+def get_server_uptime(self):
+    try:
+        uptime = time.time() - psutil.BOOT_TIME
+        return uptime
+    except Exception, e:
+        logger.error('Error reading uptime: %s' % e)
+        return False
+
+
+def get_server_cpu_percent(self):
+    try:
+        os_proc = psutil.Process(os.getpid())
+        cpu_percent = os_proc.cpu_percent()
+        return cpu_percent
+    except Exception, e:
+        logger.error('Error reading CPU percentage: %s' % e)
+        return False
+
+
+def get_server_memory_percent(self):
+    try:
+        os_proc = psutil.Process(os.getpid())
+        mem_percent = os_proc.get_memory_info()[0] / float(2 ** 20)
+        return mem_percent
+    except Exception, e:
+        logger.error('Error reading Memory percentage: %s' % e)
+        return False
+
+
+def get_server_processes(self):
+    try:
+        processes = []
+        for proc in psutil.process_iter():
+            if proc.pid > 1:
+                process = {'pid': proc.pid, 'name': proc.name(), 'cpu_percent': proc.cpu_percent()}
+                processes.append(process)
+        return processes
+    except Exception, e:
+        logger.error('Error retrieving processes: %s' % e)
         return False
 
 
