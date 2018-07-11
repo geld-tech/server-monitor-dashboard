@@ -4,7 +4,6 @@
     Display server resources usage
 """
 import ConfigParser
-import json
 import logging
 import logging.handlers
 import socket
@@ -33,8 +32,8 @@ def server_hostname():
     hostname = get_server_hostname()
     if hostname:
         return jsonify({'hostname': hostname}), 200
-    else
-    return jsonify({"cpu_temp": "localhost", "error": "Couldn't read hostname, check logs for more details.."}), 500
+    else:
+        return jsonify({"cpu_temp": "localhost", "error": "Couldn't read hostname, check logs for more details.."}), 500
 
 
 @app.route("/server/temperature")
@@ -42,8 +41,8 @@ def server_temperature():
     cpu_temp = get_server_temperature()
     if cpu_temp:
         return jsonify({'cpu_temp': cpu_temp}), 200
-    else
-    return jsonify({"cpu_temp": "-273.15", "error": "Couldn't read temperature, check logs for more details.."}), 500
+    else:
+        return jsonify({"cpu_temp": "-273.15", "error": "Couldn't read temperature, check logs for more details.."}), 500
 
 
 @app.errorhandler(404)
