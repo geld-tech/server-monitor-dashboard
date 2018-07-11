@@ -1,4 +1,4 @@
-# server-dashboard
+# server-monitor-dashboard
 
 > A Vue.js project
 

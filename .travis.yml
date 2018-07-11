@@ -27,7 +27,7 @@ cache:
 
 env:
   global:
-  - PACKAGE_NAME=server-dashboard
+  - PACKAGE_NAME=server-monitor-dashboard
   - PACKAGE_DESC="Server Dashboard displayin resources usage"
   - PACKAGE_AUTHOR=geld.tech
   - BINTRAY_REPO_NAME=debian
