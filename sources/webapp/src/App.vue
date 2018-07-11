@@ -26,7 +26,6 @@
 
 <script>
 import { fetchData } from '@/api'
-import { Tweet } from 'vue-tweet-embed'
 
 export default {
   name: 'App',
@@ -103,28 +102,6 @@ export default {
     countDownChanged (dismissCountDown) {
       this.dismissCountDown = dismissCountDown
     }
-  },
-  computed: {
-    tweets: function () {
-      var mentions = []
-      if (this.selected !== '') {
-        for (var i = 0, len = this.data[this.selected].length; i < len; i++) {
-          mentions.push({
-            id: this.data[this.selected][i]['id'],
-            id_str: this.data[this.selected][i]['id_str'],
-            created_at: this.data[this.selected][i]['created_at'],
-            text: this.data[this.selected][i]['text'],
-            user_name: this.data[this.selected][i]['user']['name'],
-            user_desc: this.data[this.selected][i]['user']['description'],
-            user_image: this.data[this.selected][i]['user']['profile_background_image_url_https']
-          })
-        }
-      }
-      return mentions
-    }
-  },
-  components: {
-    Tweet
   }
 }
 </script>
