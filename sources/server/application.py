@@ -31,6 +31,37 @@ def index():
     return render_template('index.html')
 
 
+@app.route("/server/usage")
+def server_usage():
+    try:
+        hostname = get_server_hostname()
+        server_os = get_server_platform()
+        uptime = get_server_uptime()
+        cpu_temp = get_server_temperature()
+        cpu_percent = get_server_cpu_percent()
+        mem_percent = get_server_memory_percent()
+        procs = get_server_processes()
+        disks_usage = get_disks_usage()
+        disks_io = get_disks_io()
+        swap_usage = get_swapdisk_usage()
+        network_io = get_network_io()
+        return jsonify({'hostname': hostname,
+                        'platform': server_os,
+                        'uptime': uptime,
+                        'cpu_temp': cpu_temp,
+                        'cpu_percent': cpu_percent,
+                        'mem_percent': mem_percent,
+                        'processes': procs,
+                        'disks_usage': disks_usage,
+                        'disks_io': disks_io,
+                        'swap_usage': swap_usage,
+                        'network_io': network_io
+                        }), 200
+    except Exception, e:
+        logger.error('Error retrieving server resources usage: %s' % e)
+        return jsonify({"usage": "", "error": "Couldn't retrieve server resources usage, check logs for more details.."}), 500
+
+
 @app.route("/server/hostname")
 def server_hostname():
     hostname = get_server_hostname()
@@ -162,7 +193,7 @@ def get_swapdisk_usage(self):
         return False
 
 
-def get_disks_io():
+def get_disks_io(self):
     try:
         disks_io = []
         for k, v in psutil.disk_io_counters(perdisk=True).items():
@@ -181,7 +212,7 @@ def get_disks_io():
         return False
 
 
-def get_network_io():
+def get_network_io(self):
     try:
         values = dict(psutil.net_io_counters()._asdict())
         return values
