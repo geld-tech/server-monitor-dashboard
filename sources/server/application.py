@@ -75,8 +75,7 @@ def get_server_hostname(self):
 
 def get_server_platform(self):
     try:
-        platform = platform.platform()
-        return platform
+        return platform.platform()
     except Exception, e:
         logger.error('Error reading plaftorm: %s' % e)
         return False
@@ -123,6 +122,7 @@ def get_server_processes(self):
         logger.error('Error retrieving processes: %s' % e)
         return False
 
+
 def get_disks_usage(self):
     try:
         values = []
@@ -145,6 +145,7 @@ def get_disks_usage(self):
         logger.error('Error retrieving disks usage: %s' % e)
         return False
 
+
 def get_swapdisk_usage(self):
     try:
         mem = psutil.swap_memory()
@@ -160,18 +161,19 @@ def get_swapdisk_usage(self):
         logger.error('Error retrieving swap disk usage: %s' % e)
         return False
 
+
 def get_disks_io():
     try:
         disks_io = []
         for k, v in psutil.disk_io_counters(perdisk=True).items():
             values = {'device': k,
-                    'read_time': v._asdict()['read_time'],
-                    'write_bytes': v._asdict()['write_bytes'],
-                    'read_bytes': v._asdict()['read_bytes'],
-                    'write_time': v._asdict()['write_time'],
-                    'read_count': v._asdict()['read_count'],
-                    'write_count': v._asdict()['write_count']
-                    }
+                      'read_time': v._asdict()['read_time'],
+                      'write_bytes': v._asdict()['write_bytes'],
+                      'read_bytes': v._asdict()['read_bytes'],
+                      'write_time': v._asdict()['write_time'],
+                      'read_count': v._asdict()['read_count'],
+                      'write_count': v._asdict()['write_count']
+                      }
             disks_io.append(values)
         return disks_io
     except Exception, e:
