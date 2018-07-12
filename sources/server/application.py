@@ -123,6 +123,69 @@ def get_server_processes(self):
         logger.error('Error retrieving processes: %s' % e)
         return False
 
+def get_disks_usage(self):
+    try:
+        values = []
+        disk_partitions = psutil.disk_partitions(all=False)
+        for partition in disk_partitions:
+            usage = psutil.disk_usage(partition.mountpoint)
+            device = {'device': partition.device,
+                      'mountpoint': partition.mountpoint,
+                      'fstype': partition.fstype,
+                      'opts': partition.opts,
+                      'total': usage.total,
+                      'used': usage.used,
+                      'free': usage.free,
+                      'percent': usage.percent
+                      }
+            values.append(device)
+        values = sorted(values, key=lambda device: device['device'])
+        return values
+    except Exception, e:
+        logger.error('Error retrieving disks usage: %s' % e)
+        return False
+
+def get_swapdisk_usage(self):
+    try:
+        mem = psutil.swap_memory()
+        values = {'total': mem.total,
+                  'used': mem.used,
+                  'free': mem.free,
+                  'sin': mem.sin,
+                  'sout': mem.sout,
+                  'percent': 100 / float(mem.total) * float(mem.used),
+                  }
+        return values
+    except Exception, e:
+        logger.error('Error retrieving swap disk usage: %s' % e)
+        return False
+
+def get_disks_io():
+    try:
+        disks_io = []
+        for k, v in psutil.disk_io_counters(perdisk=True).items():
+            values = {'device': k,
+                    'read_time': v._asdict()['read_time'],
+                    'write_bytes': v._asdict()['write_bytes'],
+                    'read_bytes': v._asdict()['read_bytes'],
+                    'write_time': v._asdict()['write_time'],
+                    'read_count': v._asdict()['read_count'],
+                    'write_count': v._asdict()['write_count']
+                    }
+            disks_io.append(values)
+        return disks_io
+    except Exception, e:
+        logger.error('Error retrieving disks IO rates: %s' % e)
+        return False
+
+
+def get_network_io():
+    try:
+        values = dict(psutil.net_io_counters()._asdict())
+        return values
+    except Exception, e:
+        logger.error('Error retrieving Network IO rates: %s' % e)
+        return False
 
 if __name__ == "__main__":
     # Parse options
