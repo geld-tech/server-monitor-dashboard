@@ -2,38 +2,47 @@
 set -e
 
 # Cleanup
+echo "### CLEANUP ###"
 rm -rf .local_dev/
 mkdir .local_dev/
 
 # Copy files
+echo "### COPYING ###"
 cp -r sources/server/ .local_dev/
 cp -r sources/webapp/ .local_dev/
 cd .local_dev/
 
 # Replace place holders
+echo "### CONFIGURE ###"
 find . -type f | xargs sed -i "s/__PACKAGE_NAME__/localdev/g"
 find . -type f | xargs sed -i "s/__PACKAGE_DESC__/Running application locally/g"
 find . -type f | xargs sed -i "s/__VERSION__/0.0.1/g"
 find . -type f | xargs sed -i "s/__DATE__/01-01-1970/g"
 
 # Flask application, enforce no syntax errors or undefined names, and flags other issues
+echo "### PYTHON FLAKE8 ###"
 cd server/
-flake8 . --exclude=dependencies --ignore=E501 --count --select=E901,E999,F821,F822,F823 --show-source --statistics
-flake8 . --exclude=dependencies --ignore=E501 --count --exit-zero --max-complexity=10 --statistics
+flake8 . --show-source --max-line-length=159 --max-complexity=10 --statistics --count
 cd ..
 
 # Build Vue application with DevTools enabled (Firefox or Chrome plugin)
+echo "### NPM ###"
 cd webapp/
 sed -i '/Vue.config.productionTip = false/a Vue.config.devtools = true' src/main.js
+echo "### NPM INSTALL ###"
 npm install
+echo "### NPM LINT ###"
 npm run lint
 set +e     # Ignores a particular command
-npm audit  # As doesn't seem installed on all systems
+echo "### NPM AUDIT ###"
+npm audit  2> /dev/null # Run conditionally as not installed on all systems
 set -e     # Then return to normal failures on all errors
+echo "### NPM BUILD ###"
 npm run build
 cd ..
 
 # Prepare application
+echo "### PREPARE ###"
 cd server/
 mkdir templates/
 mkdir static/
@@ -47,5 +56,6 @@ if [ ! -f server/config/settings.cfg ]; then
 fi
 
 # Run application locally on port :5000 (Press CTRL+C to quit)
+echo "### RUN ###"
 cd server/
 python application.py
