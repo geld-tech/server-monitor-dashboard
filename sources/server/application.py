@@ -86,7 +86,7 @@ def page_not_found(e):
     return jsonify({"data": "not found", "error": "resource not found"}), 404
 
 
-def get_server_temperature(self):
+def get_server_temperature():
     try:
         with open("/sys/class/thermal/thermal_zone0/temp") as temp_file:
             cpu_temp = int(temp_file.read()) / 1000
@@ -96,7 +96,7 @@ def get_server_temperature(self):
         return False
 
 
-def get_server_hostname(self):
+def get_server_hostname():
     try:
         hostname = socket.gethostname()
         return hostname
@@ -105,7 +105,7 @@ def get_server_hostname(self):
         return False
 
 
-def get_server_platform(self):
+def get_server_platform():
     try:
         return platform.platform()
     except Exception, e:
@@ -113,7 +113,7 @@ def get_server_platform(self):
         return False
 
 
-def get_server_uptime(self):
+def get_server_uptime():
     try:
         uptime = time.time() - psutil.BOOT_TIME
         return uptime
@@ -122,7 +122,7 @@ def get_server_uptime(self):
         return False
 
 
-def get_server_cpu_percent(self):
+def get_server_cpu_percent():
     try:
         os_proc = psutil.Process(os.getpid())
         cpu_percent = os_proc.cpu_percent()
@@ -132,7 +132,7 @@ def get_server_cpu_percent(self):
         return False
 
 
-def get_server_memory_percent(self):
+def get_server_memory_percent():
     try:
         os_proc = psutil.Process(os.getpid())
         mem_percent = os_proc.get_memory_info()[0] / float(2 ** 20)
@@ -142,7 +142,7 @@ def get_server_memory_percent(self):
         return False
 
 
-def get_server_processes(self):
+def get_server_processes():
     try:
         processes = []
         for proc in psutil.process_iter():
@@ -155,7 +155,7 @@ def get_server_processes(self):
         return False
 
 
-def get_disks_usage(self):
+def get_disks_usage():
     try:
         values = []
         disk_partitions = psutil.disk_partitions(all=False)
@@ -178,7 +178,7 @@ def get_disks_usage(self):
         return False
 
 
-def get_swapdisk_usage(self):
+def get_swapdisk_usage():
     try:
         mem = psutil.swap_memory()
         values = {'total': mem.total,
@@ -194,7 +194,7 @@ def get_swapdisk_usage(self):
         return False
 
 
-def get_disks_io(self):
+def get_disks_io():
     try:
         disks_io = []
         for k, v in psutil.disk_io_counters(perdisk=True).items():
@@ -213,7 +213,7 @@ def get_disks_io(self):
         return False
 
 
-def get_network_io(self):
+def get_network_io():
     try:
         values = dict(psutil.net_io_counters()._asdict())
         return values
