@@ -31,6 +31,7 @@ def index():
     return render_template('index.html')
 
 
+@app.route("/server")
 @app.route("/server/usage")
 def server_usage():
     try:
