@@ -19,8 +19,7 @@
       </b-alert>
     </div>
     <!-- Container -->
-    <b-container class="bv-example-row">
-    </b-container>
+    <router-view></router-view>
   </div>
 </template>
 
