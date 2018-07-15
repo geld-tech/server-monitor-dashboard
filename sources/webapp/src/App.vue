@@ -19,7 +19,9 @@
       </b-alert>
     </div>
     <!-- Container -->
-    <router-view></router-view>
+    <div id="app-container">
+        <router-view></router-view>
+    </div>
   </div>
 </template>
 
@@ -51,7 +53,6 @@ export default {
       this.error = ''
       if (searchKeyword !== '') {
         /* Trick to reset/clear native browser form validation state */
-        this.selected = ''
         this.data = []
         this.show = false
         this.$nextTick(() => { this.show = true })
@@ -73,7 +74,6 @@ export default {
       evt.preventDefault()
       /* Reset our form values */
       this.form.keyword = ''
-      this.selected = ''
       this.data = []
       this.loading = false
       /* Trick to reset/clear native browser form validation state */
@@ -86,17 +86,6 @@ export default {
       input = input.replace('/', '')
       input = input.trim()
       return input
-    },
-    selectProject(project) {
-      if (this.selected === project) {
-        this.selected = ''
-      } else {
-        this.selected = ''
-        this.show = false
-        this.$nextTick(() => { this.show = true })
-        this.selected = project
-      }
-      return true
     },
     countDownChanged (dismissCountDown) {
       this.dismissCountDown = dismissCountDown
