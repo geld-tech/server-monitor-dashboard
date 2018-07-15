@@ -19,44 +19,8 @@
       </b-alert>
     </div>
     <!-- Container -->
-    <b-container class="bv-example-row">
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h4>Resources</h4>
-            </b-col>
-            <b-col sm="4">
-                <div v-if="loading" class="loading">
-                  <img src="/static/images/spinner.gif" width="32" height="32"/>
-                </div>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Hostname</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.hostname }}</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Platform</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.platform }}</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Temperature</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.cpu_temp }}</p>
-            </b-col>
-        </b-row>
-    </b-container>
     <div id="app-container">
-        <router-view></router-view>
+        <router-view v-bind:data="data"></router-view>
     </div>
   </div>
 </template>
