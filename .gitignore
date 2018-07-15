@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Lcoel Development Directory
+.local_dev/
+
 # C extensions
 *.so
 
