@@ -19,6 +19,16 @@
       </b-alert>
     </div>
     <!-- Container -->
+    <b-container class="bv-example-row">
+        <b-row align-v="start" align-h="around">
+            <b-col sm="4">
+                <h4>Resources</h4>
+                <div v-if="loading" class="loading">
+                  <img src="/static/images/spinner.gif" width="32" height="32"/>
+                </div>
+            </b-col>
+        </b-row>
+    </b-container>
     <div id="app-container">
         <router-view></router-view>
     </div>
@@ -36,7 +46,6 @@ export default {
         keyword: ''
       },
       data: [],
-      selected: '',
       loading: false,
       dismissCountDown: 0,
       error: '',
