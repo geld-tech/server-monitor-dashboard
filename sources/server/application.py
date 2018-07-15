@@ -31,8 +31,8 @@ def index():
     return render_template('index.html')
 
 
-@app.route("/server")
-@app.route("/server/usage")
+@app.route("/server", strict_slashes=False)
+@app.route("/server/usage", strict_slashes=False)
 def server_usage():
     try:
         hostname = get_server_hostname()
@@ -46,21 +46,21 @@ def server_usage():
         disks_io = get_disks_io()
         swap_usage = get_swapdisk_usage()
         network_io = get_network_io()
-        return jsonify({'hostname': hostname,
-                        'platform': server_os,
-                        'uptime': uptime,
-                        'cpu_temp': cpu_temp,
-                        'cpu_percent': cpu_percent,
-                        'mem_percent': mem_percent,
-                        'processes': procs,
-                        'disks_usage': disks_usage,
-                        'disks_io': disks_io,
-                        'swap_usage': swap_usage,
-                        'network_io': network_io
-                        }), 200
+        data = {'hostname': hostname,
+                'platform': server_os,
+                'uptime': uptime,
+                'cpu_temp': cpu_temp,
+                'cpu_percent': cpu_percent,
+                'mem_percent': mem_percent,
+                'processes': procs,
+                'disks_usage': disks_usage,
+                'disks_io': disks_io,
+                'swap_usage': swap_usage,
+                'network_io': network_io}
+        return jsonify({'data': data}), 200
     except Exception, e:
         logger.error('Error retrieving server resources usage: %s' % e)
-        return jsonify({"usage": "", "error": "Couldn't retrieve server resources usage, check logs for more details.."}), 500
+        return jsonify({'data': {}, 'error': 'Could not retrieve server resources usage, check logs for more details..'}), 500
 
 
 @app.route("/server/hostname")

@@ -45,12 +45,30 @@ export default {
       form: {
         keyword: ''
       },
-      data: [],
+      data: {},
       loading: false,
       dismissCountDown: 0,
       error: '',
       show: true
     }
+  },
+  created() {
+    this.loading = false
+    /* Trick to reset/clear native browser form validation state */
+    this.data = {}
+    this.show = false
+    this.$nextTick(() => { this.show = true })
+    /* Fetching the data */
+    this.loading = true
+    fetchData()
+      .then(response => {
+        this.data = response.data
+        this.loading = false
+      })
+      .catch(err => {
+        this.error = err.message
+        this.loading = false
+      })
   },
   methods: {
     onSubmit(evt) {
@@ -62,7 +80,7 @@ export default {
       this.error = ''
       if (searchKeyword !== '') {
         /* Trick to reset/clear native browser form validation state */
-        this.data = []
+        this.data = {}
         this.show = false
         this.$nextTick(() => { this.show = true })
         /* Fetching the data */
@@ -83,7 +101,7 @@ export default {
       evt.preventDefault()
       /* Reset our form values */
       this.form.keyword = ''
-      this.data = []
+      this.data = {}
       this.loading = false
       /* Trick to reset/clear native browser form validation state */
       this.show = false
