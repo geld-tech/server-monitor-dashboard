@@ -23,9 +23,19 @@
         <b-row align-v="start" align-h="around">
             <b-col sm="4">
                 <h4>Resources</h4>
+            </b-col>
+            <b-col sm="4">
                 <div v-if="loading" class="loading">
                   <img src="/static/images/spinner.gif" width="32" height="32"/>
                 </div>
+            </b-col>
+        </b-row>
+        <b-row align-v="start" align-h="around">
+            <b-col sm="4">
+                <h6>Hostname</h6>
+            </b-col>
+            <b-col sm="4">
+                <p v-if="data">{{ data.hostname }}</p>
             </b-col>
         </b-row>
     </b-container>
