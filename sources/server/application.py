@@ -146,6 +146,14 @@ def get_server_disk_usage_percent(mountpoint='/'):
         return False
 
 
+def get_server_processors_count():
+    try:
+        return psutil.cpu_count()
+    except Exception, e:
+        logger.error('Error reading count of CPU: %s' % e)
+        return False
+
+
 def get_server_memory_percent():
     try:
         os_proc = psutil.Process(os.getpid())
