@@ -34,7 +34,7 @@
                 <h6>Uptime</h6>
             </b-col>
             <b-col sm="4">
-                <p v-if="data">{{ data.uptime }}</p>
+                <p v-if="data">{{ parseInt(data.uptime/60/60/24) }} days</p>
             </b-col>
         </b-row>
         <b-row align-v="start" align-h="around">
