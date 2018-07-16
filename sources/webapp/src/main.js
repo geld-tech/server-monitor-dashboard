@@ -5,13 +5,14 @@ import App from './App'
 import router from './router'
 
 import BootstrapVue from 'bootstrap-vue'
-import { Alert, Navbar } from 'bootstrap-vue/es/components'
+import { Alert, Collapse, Navbar } from 'bootstrap-vue/es/components'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.use(BootstrapVue)
-Vue.use(Navbar)
 Vue.use(Alert)
+Vue.use(Collapse)
+Vue.use(Navbar)
 
 Vue.config.productionTip = false
 
