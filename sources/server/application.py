@@ -130,6 +130,22 @@ def get_server_cpu_percent():
         return False
 
 
+def get_server_virtual_memory_percent():
+    try:
+        return psutil.virtual_memory().percent
+    except Exception, e:
+        logger.error('Error reading Virtual Memory percentage: %s' % e)
+        return False
+
+
+def get_server_disk_usage_percent(mountpoint='/'):
+    try:
+        return psutil.disk_usage(mountpoint).percent
+    except Exception, e:
+        logger.error('Error reading Disk Usage Mountpoint percentage: %s' % e)
+        return False
+
+
 def get_server_memory_percent():
     try:
         os_proc = psutil.Process(os.getpid())
