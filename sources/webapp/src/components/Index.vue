@@ -107,11 +107,11 @@
                         <b-btn v-b-toggle.processesText class="m-1">View All</b-btn>
                         <b-collapse id="processesText">
                           <b-card>
-                              <ul>
-                                <li v-for="proc in data.processes" v-bind:key="proc" v-if="proc['cpu_percent'] > 0">
-                                    <strong>{{ proc['name'] }} ({{ proc['pid'] }})</strong>: {{ proc['cpu_percent'] }}
-                                </li>
-                              </ul>
+                              <b-table striped hover id="processesTable"
+                                v-bind:items="data.processes"
+                                v-bind:fields="[{key:'pid',sortable:true}, {key:'name',sortable:true}, {key:'cpu_percent',sortable:true,sortDirection:'desc'}]"
+                                v-bind:per-page="12">
+                            </b-table>
                           </b-card>
                         </b-collapse>
                     </div>
@@ -148,5 +148,8 @@ li {
 }
 a {
   color: #42b983;
+}
+#processesTable{
+  font-size: 10px;
 }
 </style>
