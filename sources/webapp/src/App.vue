@@ -36,9 +36,10 @@ export default {
         keyword: ''
       },
       data: {},
-      loading: false,
       dismissCountDown: 0,
       error: '',
+      loading: false,
+      refreshInterval: 0,
       show: true
     }
   },
@@ -50,17 +51,25 @@ export default {
     this.$nextTick(() => { this.show = true })
     /* Fetching the data */
     this.loading = true
-    fetchData()
-      .then(response => {
-        this.data = response.data
-        this.loading = false
-      })
-      .catch(err => {
-        this.error = err.message
-        this.loading = false
-      })
+    this.fetchResourcesData()
+    /* Sets interval for auto-refresh */
+    this.refreshInterval = window.setInterval(this.fetchResourcesData, 6000)
+  },
+  beforeDestroy() {
+    window.clearInterval(this.refreshInterval)
   },
   methods: {
+    fetchResourcesData() {
+      fetchData()
+        .then(response => {
+          this.data = response.data
+          this.loading = false
+        })
+        .catch(err => {
+          this.error = err.message
+          this.loading = false
+        })
+    },
     onSubmit(evt) {
       evt.preventDefault()
       var searchKeyword = this.sanitizeString(this.form.keyword)
