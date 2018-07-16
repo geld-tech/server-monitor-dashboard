@@ -150,6 +150,6 @@ a {
   color: #42b983;
 }
 #processesTable{
-  font-size: 14x;
+  font-size: 12x;
 }
 </style>
