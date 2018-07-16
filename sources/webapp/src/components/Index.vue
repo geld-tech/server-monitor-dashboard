@@ -1,100 +1,96 @@
 <template>
   <div class="index">
-    <h1>{{ msg }}</h1>
     <!-- Container -->
     <b-container class="bv-example-row">
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h4>Resources</h4>
-            </b-col>
-            <b-col sm="4">
-                <div v-if="loading" class="loading">
-                  <img src="/static/images/spinner.gif" width="32" height="32"/>
-                </div>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Hostname</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.hostname }}</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Platform</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.platform }}</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Uptime</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ parseInt(data.uptime/60/60/24) }} days</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Temperature</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.cpu_temp }}&deg; C</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>CPU</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.cpu_percent.toFixed(2) || '0' }}%</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Memory</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.mem_percent.toFixed(2) || '0' }}%</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>SWAP</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.swap_usage['percent'].toFixed(2) || '0' }}%</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Network</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">Tx {{ data.network_io['bytes_sent'] }}</p>
-                <p v-if="data">Rx {{ data.network_io['bytes_recv'] }}</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Disks</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.disks_usage }}</p>
-                <p v-if="data">{{ data.disks_io }}</p>
-            </b-col>
-        </b-row>
-        <b-row align-v="start" align-h="around">
-            <b-col sm="4">
-                <h6>Processes</h6>
-            </b-col>
-            <b-col sm="4">
-                <p v-if="data">{{ data.processes }}</p>
-            </b-col>
-        </b-row>
+        <div v-if="loading" class="loading">
+            <h1>Loading...</h1>
+            <img src="/static/images/spinner.gif" width="32" height="32"/>
+        </div>
+        <div v-else>
+            <h1>{{ msg }}</h1>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>Hostname</h3>
+                </b-col>
+                <b-col sm="4">
+                    <p v-if="data">{{ data.hostname }}</p>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>Platform</h3>
+                </b-col>
+                <b-col sm="4">
+                    <p v-if="data">{{ data.platform }}</p>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>Uptime</h3>
+                </b-col>
+                <b-col sm="4">
+                    <p v-if="data">{{ parseInt(data.uptime/60/60/24) }} days</p>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>Temperature</h3>
+                </b-col>
+                <b-col sm="4">
+                    <p v-if="data">{{ data.cpu_temp }}&deg; C</p>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>CPU</h3>
+                </b-col>
+                <b-col sm="4">
+                    <p v-if="data">{{ data.cpu_percent.toFixed(2) || '0' }}%</p>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>Memory</h3>
+                </b-col>
+                <b-col sm="4">
+                    <p v-if="data">{{ data.mem_percent.toFixed(2) || '0' }}%</p>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>SWAP</h3>
+                </b-col>
+                <b-col sm="4">
+                    <p v-if="data">{{ data.swap_usage['percent'].toFixed(2) || '0' }}%</p>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>Network</h3>
+                </b-col>
+                <b-col sm="4">
+                    <p v-if="data">Tx {{ data.network_io['bytes_sent'] }}</p>
+                    <p v-if="data">Rx {{ data.network_io['bytes_recv'] }}</p>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>Disks</h3>
+                </b-col>
+                <b-col sm="4">
+                    <p v-if="data">{{ data.disks_usage }}</p>
+                    <p v-if="data">{{ data.disks_io }}</p>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>Processes</h3>
+                </b-col>
+                <b-col sm="4">
+                    <p v-if="data">{{ data.processes }}</p>
+                </b-col>
+            </b-row>
+        </div>
     </b-container>
   </div>
 </template>
