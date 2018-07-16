@@ -83,12 +83,16 @@
                         <b-btn v-b-toggle.disksIOText class="m-1">View IO</b-btn>
                         <b-collapse id="disksUsageText">
                           <b-card>
-                              {{ data.disks_usage }}
+                              <ul>
+                                <li v-for="disk in data.disks_usage" v-bind:key="disk"><strong>{{ disk['mountpoint'] }}</strong>: {{ disk['percent'] }} %</li>
+                              </ul>
                           </b-card>
                         </b-collapse>
                         <b-collapse id="disksIOText">
                           <b-card>
-                              {{ data.disks_io }}
+                              <ul>
+                                <li v-for="disk in data.disks_io" v-bind:key="disk"><strong>{{ disk['device'] }}</strong>: {{ disk['read_bytes'] }} / {{ disk['write_bytes'] }}</li>
+                              </ul>
                           </b-card>
                         </b-collapse>
                     </div>
@@ -103,7 +107,11 @@
                         <b-btn v-b-toggle.processesText class="m-1">View All</b-btn>
                         <b-collapse id="processesText">
                           <b-card>
-                              {{ data.processes }}
+                              <ul>
+                                <li v-for="proc in data.processes" v-bind:key="proc" v-if="proc['cpu_percent'] > 0">
+                                    <strong>{{ proc['name'] }} ({{ proc['pid'] }})</strong>: {{ proc['cpu_percent'] }}
+                                </li>
+                              </ul>
                           </b-card>
                         </b-collapse>
                     </div>
