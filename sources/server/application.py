@@ -124,9 +124,7 @@ def get_server_uptime():
 
 def get_server_cpu_percent():
     try:
-        os_proc = psutil.Process(os.getpid())
-        cpu_percent = os_proc.cpu_percent()
-        return cpu_percent
+        return psutil.cpu_percent(interval=1)
     except Exception, e:
         logger.error('Error reading CPU percentage: %s' % e)
         return False
