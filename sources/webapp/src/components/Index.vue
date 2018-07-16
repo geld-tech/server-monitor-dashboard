@@ -31,10 +31,68 @@
         </b-row>
         <b-row align-v="start" align-h="around">
             <b-col sm="4">
+                <h6>Uptime</h6>
+            </b-col>
+            <b-col sm="4">
+                <p v-if="data">{{ data.uptime }}</p>
+            </b-col>
+        </b-row>
+        <b-row align-v="start" align-h="around">
+            <b-col sm="4">
                 <h6>Temperature</h6>
             </b-col>
             <b-col sm="4">
                 <p v-if="data">{{ data.cpu_temp }}&deg; C</p>
+            </b-col>
+        </b-row>
+        <b-row align-v="start" align-h="around">
+            <b-col sm="4">
+                <h6>CPU</h6>
+            </b-col>
+            <b-col sm="4">
+                <p v-if="data">{{ data.cpu_percent.toFixed(2) || '0' }}%</p>
+            </b-col>
+        </b-row>
+        <b-row align-v="start" align-h="around">
+            <b-col sm="4">
+                <h6>Memory</h6>
+            </b-col>
+            <b-col sm="4">
+                <p v-if="data">{{ data.mem_percent.toFixed(2) || '0' }}%</p>
+            </b-col>
+        </b-row>
+        <b-row align-v="start" align-h="around">
+            <b-col sm="4">
+                <h6>SWAP</h6>
+            </b-col>
+            <b-col sm="4">
+                <p v-if="data">{{ data.swap_usage['percent'].toFixed(2) || '0' }}%</p>
+            </b-col>
+        </b-row>
+        <b-row align-v="start" align-h="around">
+            <b-col sm="4">
+                <h6>Network</h6>
+            </b-col>
+            <b-col sm="4">
+                <p v-if="data">Tx {{ data.network_io['bytes_sent'] }}</p>
+                <p v-if="data">Rx {{ data.network_io['bytes_recv'] }}</p>
+            </b-col>
+        </b-row>
+        <b-row align-v="start" align-h="around">
+            <b-col sm="4">
+                <h6>Disks</h6>
+            </b-col>
+            <b-col sm="4">
+                <p v-if="data">{{ data.disks_usage }}</p>
+                <p v-if="data">{{ data.disks_io }}</p>
+            </b-col>
+        </b-row>
+        <b-row align-v="start" align-h="around">
+            <b-col sm="4">
+                <h6>Processes</h6>
+            </b-col>
+            <b-col sm="4">
+                <p v-if="data">{{ data.processes }}</p>
             </b-col>
         </b-row>
     </b-container>
