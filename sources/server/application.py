@@ -113,6 +113,14 @@ def get_server_platform():
         return False
 
 
+def get_server_release():
+    try:
+        return platform.release()
+    except Exception, e:
+        logger.error('Error reading release: %s' % e)
+        return False
+
+
 def get_server_uptime():
     try:
         uptime = time.time() - psutil.BOOT_TIME
