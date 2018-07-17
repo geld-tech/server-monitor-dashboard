@@ -113,6 +113,22 @@ def get_server_platform():
         return False
 
 
+def get_server_system():
+    try:
+        return platform.system()
+    except Exception, e:
+        logger.error('Error reading operating system: %s' % e)
+        return False
+
+
+def get_server_architecture():
+    try:
+        return platform.machine()
+    except Exception, e:
+        logger.error('Error reading machine architecture: %s' % e)
+        return False
+
+
 def get_server_release():
     try:
         return platform.release()
