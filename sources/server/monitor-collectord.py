@@ -41,8 +41,8 @@ class MetricsCollector():
         else:
             self.db_conn = sqlite3.connect(db_path)
             self.db_conn.execute('CREATE TABLE system_information(hostname TEXT, architecture TEXT, platform TEXT, system TEXT, release TEXT)')
-            self.db_conn.execute('CREATE TABLE system_status(hostname TEXT, temperature TEXT, uptime TEXT, cpu_percent TEXT, mem_percent TEXT)')
-            self.db_conn.execute('CREATE TABLE processes(pid TEXT, name TEXT, cpu_percent TEXT)')
+            self.db_conn.execute('CREATE TABLE system_status(hostname TEXT, temperature TEXT, uptime TEXT, cpu_percent TEXT, mem_percent TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)')
+            self.db_conn.execute('CREATE TABLE processes(pid TEXT, name TEXT, cpu_percent TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)')
             self.db_conn.commit()
 
     def disconnect_db(self):
