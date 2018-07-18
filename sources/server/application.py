@@ -188,7 +188,7 @@ def get_server_memory_percent():
         return False
 
 
-def get_server_processes():
+def get_server_processes(min_percent=0.1):
     try:
         processes = []
         for proc in psutil.process_iter():
