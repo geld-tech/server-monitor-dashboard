@@ -34,18 +34,12 @@
             </b-row>
             <b-row align-v="start" align-h="around">
                 <b-col sm="4">
-                    <h3>Temperature</h3>
-                </b-col>
-                <b-col sm="8">
-                    <p v-if="data">{{ data.cpu_temp }}&deg; C</p>
-                </b-col>
-            </b-row>
-            <b-row align-v="start" align-h="around">
-                <b-col sm="4">
                     <h3>CPU</h3>
                 </b-col>
                 <b-col sm="8">
-                    <p v-if="data">{{ data.cpu_percent.toFixed(2) || '0' }}%</p>
+                    <b-progress show-progress v-if="data" v-bind:max="100" class="w-80 mb-2">
+                        <b-progress-bar variant="primary" v-bind:value="data.cpu_percent" v-bind:label="data.cpu_percent.toFixed(1)+'%' || '0'" height="20px"></b-progress-bar>
+                    </b-progress>
                 </b-col>
             </b-row>
             <b-row align-v="start" align-h="around">
@@ -53,7 +47,9 @@
                     <h3>Memory</h3>
                 </b-col>
                 <b-col sm="8">
-                    <p v-if="data">{{ data.mem_percent.toFixed(2) || '0' }}%</p>
+                    <b-progress show-progress v-if="data" v-bind:max="100" class="w-80 mb-2">
+                        <b-progress-bar variant="primary" v-bind:value="data.mem_percent" v-bind:label="data.mem_percent.toFixed(1)+'%' || '0'" height="20px"></b-progress-bar>
+                    </b-progress>
                 </b-col>
             </b-row>
             <b-row align-v="start" align-h="around">
@@ -61,7 +57,24 @@
                     <h3>SWAP</h3>
                 </b-col>
                 <b-col sm="8">
-                    <p v-if="data">{{ data.swap_usage['percent'].toFixed(2) || '0' }}%</p>
+                    <b-progress show-progress v-if="data" v-bind:max="100" class="w-80 mb-2">
+                        <b-progress-bar
+                            variant="primary"
+                            v-bind:value="data.swap_usage['percent']"
+                            v-bind:label="data.swap_usage['percent'].toFixed(1)+'%' || '0'"
+                            height="20px">
+                        </b-progress-bar>
+                    </b-progress>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="4">
+                    <h3>Temperature</h3>
+                </b-col>
+                <b-col sm="8">
+                    <b-progress show-progress v-if="data" v-bind:max="100" class="w-80 mb-2">
+                        <b-progress-bar variant="primary" v-bind:value="data.cpu_temp" v-bind:label="data.cpu_temp+'&deg; C'" height="20px"></b-progress-bar>
+                    </b-progress>
                 </b-col>
             </b-row>
             <b-row align-v="start" align-h="around">
@@ -150,6 +163,6 @@ a {
   color: #42b983;
 }
 #processesTable{
-  font-size: 12x;
+  font-size: 10x;
 }
 </style>
