@@ -1,12 +1,12 @@
 [Unit]
 Description=__PACKAGE_DESC__
-After=network.target
+RequiredBy=server-monitor-dashboard
 
 [Service]
 User=www-data
 Group=www-data
 WorkingDirectory=__PACKAGE_DIR__
-ExecStart=collector.py
+ExecStart=monitor-collectord.py
 
 [Install]
 WantedBy=multi-user.target

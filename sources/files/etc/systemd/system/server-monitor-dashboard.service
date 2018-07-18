@@ -1,7 +1,7 @@
 [Unit]
 Description=__PACKAGE_DESC__
 After=network.target
-Wants=server-monitor-collectord
+Requires=server-monitor-collectord
 
 [Service]
 User=www-data
