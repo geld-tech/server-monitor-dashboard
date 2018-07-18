@@ -3,6 +3,7 @@ import sys
 import time
 from daemon import runner
 
+
 class MetricsCollector():
     def __init__(self):
         self.stdin_path = '/dev/null'
