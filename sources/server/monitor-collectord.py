@@ -1,33 +1,31 @@
 #!/usr/bin/env python
 import sys
 import time
-from daemon import Daemon
+from daemon import runner
 
-class Metrics(object):
+class MetricsCollector():
+    def __init__(self):
+        self.stdin_path = '/dev/null'
+        self.stdout_path = '/dev/tty'
+        self.stderr_path = '/dev/tty'
+        self.pidfile_path =  '/var/run/monitor-collectord.pid'
+        self.pidfile_timeout = 5
     def run(self):
         while True:
+            print 'Running..'
             time.sleep(10)
 
 
-class MetricsCollector(Daemon):
-    def run(self):
-        server = Metrics()
-        server.run()
-
-
+# Main
 if __name__ == "__main__":
-    daemon = MetricsCollector('/var/run/monitor-collectord.pid')
     if len(sys.argv) == 2:
-        if 'start' == sys.argv[1]:
-            daemon.start()
-        elif 'stop' == sys.argv[1]:
-            daemon.stop()
-        elif 'restart' == sys.argv[1]:
-            daemon.restart()
-        else:
-            print "Unknown command"
-            sys.exit(2)
+        collector = MetricsCollector()
+        daemon = runner.DaemonRunner(collector)
+        daemon.do_action() # start|stop|restart as sys.argv[1
         sys.exit(0)
     else:
-        print "usage: %s start|stop|restart" % sys.argv[0]
+        print "Usage: %s start|stop|restart" % sys.argv[0]
         sys.exit(2)
+else:                                                           
+    print "%s can't be included in another program." % sys.argv[0]
+    sys.exit(1)
