@@ -1,13 +1,12 @@
 [Unit]
 Description=__PACKAGE_DESC__
 After=network.target
-Wants=server-monitor-collectord
 
 [Service]
 User=www-data
 Group=www-data
 WorkingDirectory=__PACKAGE_DIR__
-ExecStart=/usr/bin/gunicorn --workers 3 --bind 0.0.0.0:8002 --keep-alive 75 -m 007 application:app
+ExecStart=collector.py
 
 [Install]
 WantedBy=multi-user.target
