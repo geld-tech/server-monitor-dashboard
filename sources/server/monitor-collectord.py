@@ -23,9 +23,13 @@ class MetricsCollector():
 
     def run(self):
         server = ServerMetrics()
+        data = server.poll_metrics()
         self.connect_db(self.db_path)
+        self.store_system_information(data)
         while True:
-            print server.poll_metrics()
+            data = server.poll_metrics()
+            self.store_system_status(data)
+            self.store_processes(data)
             time.sleep(10)
 
     def stop(self):
@@ -36,32 +40,63 @@ class MetricsCollector():
             self.db_conn = sqlite3.connect(db_path)
         else:
             self.db_conn = sqlite3.connect(db_path)
-            self.db_conn.execute('CREATE TABLE server_metrics(hostname TEXT, cpu_temp TEXT, cpu_percent TEXT)')
+            self.db_conn.execute('CREATE TABLE system_information(hostname TEXT, architecture TEXT, platform TEXT, system TEXT, release TEXT)')
+            self.db_conn.execute('CREATE TABLE system_status(hostname TEXT, temperature TEXT, uptime TEXT, cpu_percent TEXT, mem_percent TEXT)')
+            self.db_conn.execute('CREATE TABLE processes(pid TEXT, name TEXT, cpu_percent TEXT)')
+            self.db_conn.commit()
 
     def disconnect_db(self):
         if self.db_conn:
             self.db_conn.close()
 
+    def store_system_information(self, data):
+        self.db_conn.execute('INSERT INTO system_information(hostname, architecture, platform, system, release) VALUES ("%s", "%s", "%s", "%s", "%s")'
+                             % (data['hostname'], data['architecture'], data['platform'], data['system'], data['release']))
+        self.db_conn.commit()
+
+    def store_system_status(self, data):
+        self.db_conn.execute('INSERT INTO system_status(hostname, temperature, uptime, cpu_percent, mem_percent) VALUES ("%s", "%s", "%s", "%s", "%s")'
+                             % (data['hostname'], data['cpu_temp'], data['uptime'], data['cpu_percent'], data['vmem_percent']))
+        self.db_conn.commit()
+
+    def store_processes(self, data):
+        for proc in data['processes']:
+            if proc['cpu_percent'] > 0.1:
+                self.db_conn.execute('INSERT INTO processes(pid, name, cpu_percent) VALUES ("%s", "%s", "%s")'
+                                     % (proc['pid'], proc['name'], proc['cpu_percent']))
+                self.db_conn.commit()
+
+
+def is_running(pid_file):
+    try:
+        with file(pid_file, 'r') as pf:
+            pid = int(pf.read().strip())
+    except IOError:
+        pid = None
+    except SystemExit:
+        pid = None
+
+    if pid:
+        return True, pid
+    else:
+        return False, -1
+
+
 # Main
+PID_FILE = '/var/run/monitor-collectord.pid'
+
 if __name__ == "__main__":
     if len(sys.argv) == 2:
-        pid_file = '/var/run/monitor-collectord.pid'
         if 'status' == sys.argv[1]:
-            try:
-                with file(pid_file, 'r') as pf:
-                    pid = int(pf.read().strip())
-            except IOError:
-                pid = None
-            except SystemExit:
-                pid = None
-
-            if pid:
+            running, pid = is_running(PID_FILE)
+            if running:
                 print '%s is running as pid %s' % (sys.argv[0], pid)
             else:
                 print '%s is not running.' % sys.argv[0]
-
+        elif 'stop' == sys.argv[1] and not is_running(PID_FILE)[0]:
+            print '%s is not running.' % sys.argv[0]
         else:
-            collector = MetricsCollector(pid_file)
+            collector = MetricsCollector(PID_FILE)
             daemon = runner.DaemonRunner(collector)
             daemon.do_action()  # start|stop|restart as sys.argv[1
             sys.exit(0)

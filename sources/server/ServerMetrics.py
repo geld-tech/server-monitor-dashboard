@@ -31,22 +31,30 @@ class ServerMetrics:
     def _get_metrics(self):
         try:
             hostname = self.get_server_hostname()
-            server_os = self.get_server_platform()
+            server_platform = self.get_server_platform()
+            server_system = self.get_server_system()
+            server_release = self.get_server_release()
+            server_architecture = self.get_server_architecture()
             uptime = self.get_server_uptime()
             cpu_temp = self.get_server_temperature()
             cpu_percent = self.get_server_cpu_percent()
             mem_percent = self.get_server_memory_percent()
+            vmem_percent = self.get_server_virtual_memory_percent()
             procs = self.get_server_processes()
             disks_usage = self.get_disks_usage()
             disks_io = self.get_disks_io()
             swap_usage = self.get_swapdisk_usage()
             network_io = self.get_network_io()
             data = {'hostname': hostname,
-                    'platform': server_os,
+                    'platform': server_platform,
+                    'system': server_system,
+                    'release': server_release,
+                    'architecture': server_architecture,
                     'uptime': uptime,
                     'cpu_temp': cpu_temp,
                     'cpu_percent': cpu_percent,
                     'mem_percent': mem_percent,
+                    'vmem_percent': vmem_percent,
                     'processes': procs,
                     'disks_usage': disks_usage,
                     'disks_io': disks_io,
