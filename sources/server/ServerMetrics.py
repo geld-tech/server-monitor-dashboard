@@ -2,32 +2,31 @@
 """
     Server Metrics for Resources and Usage
 """
+import logging
+import logging.handlers
 import os
 import platform
 import psutil
 import time
 import socket
-from optparse import OptionParser
 
 
 class ServerMetrics:
     def __init__(self):
+        logging.basicConfig(format='[%(asctime)-15s] [%(threadName)s] %(levelname)s %(message)s', level=logging.INFO)
+        self.logger = logging.getLogger('root')
         self._data = {}
         self.collect_metrics()
 
-
     def get(self):
         return self._data
-
 
     def poll_metrics(self):
         self.collect_metrics()
         return self._data
 
-
     def collect_metrics(self):
         self._data = self._get_metrics()
-
 
     def _get_metrics(self):
         try:
@@ -53,11 +52,10 @@ class ServerMetrics:
                     'disks_io': disks_io,
                     'swap_usage': swap_usage,
                     'network_io': network_io}
-            return data 
+            return data
         except Exception, e:
             print 'Error retrieving server resources usage: %s' % e
             return {}
-
 
     def get_server_temperature(self):
         try:
@@ -65,91 +63,80 @@ class ServerMetrics:
                 cpu_temp = int(temp_file.read()) / 1000
             return cpu_temp
         except Exception, e:
-            logger.error('Error reading temperature: %s' % e)
+            self.logger.error('Error reading temperature: %s' % e)
             return False
-
 
     def get_server_hostname(self):
         try:
             hostname = socket.gethostname()
             return hostname
         except Exception, e:
-            logger.error('Error reading hostname: %s' % e)
+            self.logger.error('Error reading hostname: %s' % e)
             return False
-
 
     def get_server_platform(self):
         try:
             return platform.platform()
         except Exception, e:
-            logger.error('Error reading plaftorm: %s' % e)
+            self.logger.error('Error reading plaftorm: %s' % e)
             return False
-
 
     def get_server_system(self):
         try:
             return platform.system()
         except Exception, e:
-            logger.error('Error reading operating system: %s' % e)
+            self.logger.error('Error reading operating system: %s' % e)
             return False
-
 
     def get_server_architecture(self):
         try:
             return platform.machine()
         except Exception, e:
-            logger.error('Error reading machine architecture: %s' % e)
+            self.logger.error('Error reading machine architecture: %s' % e)
             return False
-
 
     def get_server_release(self):
         try:
             return platform.release()
         except Exception, e:
-            logger.error('Error reading release: %s' % e)
+            self.logger.error('Error reading release: %s' % e)
             return False
-
 
     def get_server_uptime(self):
         try:
             uptime = time.time() - psutil.BOOT_TIME
             return uptime
         except Exception, e:
-            logger.error('Error reading uptime: %s' % e)
+            self.logger.error('Error reading uptime: %s' % e)
             return False
-
 
     def get_server_cpu_percent(self):
         try:
             return psutil.cpu_percent(interval=1)
         except Exception, e:
-            logger.error('Error reading CPU percentage: %s' % e)
+            self.logger.error('Error reading CPU percentage: %s' % e)
             return False
-
 
     def get_server_virtual_memory_percent(self):
         try:
             return psutil.virtual_memory().percent
         except Exception, e:
-            logger.error('Error reading Virtual Memory percentage: %s' % e)
+            self.logger.error('Error reading Virtual Memory percentage: %s' % e)
             return False
-
 
     def get_server_disk_usage_percent(self, mountpoint='/'):
         try:
             return psutil.disk_usage(mountpoint).percent
         except Exception, e:
-            logger.error('Error reading Disk Usage Mountpoint percentage: %s' % e)
+            self.logger.error('Error reading Disk Usage Mountpoint percentage: %s' % e)
             return False
-
 
     def get_server_processors_count(self):
         try:
             return psutil.cpu_count()
         except Exception, e:
-            logger.error('Error reading count of CPU: %s' % e)
+            self.logger.error('Error reading count of CPU: %s' % e)
             return False
-
 
     def get_server_memory_percent(self):
         try:
@@ -157,9 +144,8 @@ class ServerMetrics:
             mem_percent = os_proc.get_memory_info()[0] / float(2 ** 20)
             return mem_percent
         except Exception, e:
-            logger.error('Error reading Memory percentage: %s' % e)
+            self.logger.error('Error reading Memory percentage: %s' % e)
             return False
-
 
     def get_server_processes(self):
         try:
@@ -170,9 +156,8 @@ class ServerMetrics:
                     processes.append(process)
             return processes
         except Exception, e:
-            logger.error('Error retrieving processes: %s' % e)
+            self.logger.error('Error retrieving processes: %s' % e)
             return False
-
 
     def get_disks_usage(self):
         try:
@@ -193,9 +178,8 @@ class ServerMetrics:
             values = sorted(values, key=lambda device: device['device'])
             return values
         except Exception, e:
-            logger.error('Error retrieving disks usage: %s' % e)
+            self.logger.error('Error retrieving disks usage: %s' % e)
             return False
-
 
     def get_swapdisk_usage(self):
         try:
@@ -209,9 +193,8 @@ class ServerMetrics:
                       }
             return values
         except Exception, e:
-            logger.error('Error retrieving swap disk usage: %s' % e)
+            self.logger.error('Error retrieving swap disk usage: %s' % e)
             return False
-
 
     def get_disks_io(self):
         try:
@@ -228,14 +211,13 @@ class ServerMetrics:
                 disks_io.append(values)
             return disks_io
         except Exception, e:
-            logger.error('Error retrieving disks IO rates: %s' % e)
+            self.logger.error('Error retrieving disks IO rates: %s' % e)
             return False
-
 
     def get_network_io(self):
         try:
             values = dict(psutil.net_io_counters()._asdict())
             return values
         except Exception, e:
-            logger.error('Error retrieving Network IO rates: %s' % e)
+            self.logger.error('Error retrieving Network IO rates: %s' % e)
             return False
