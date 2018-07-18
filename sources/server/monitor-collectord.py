@@ -2,6 +2,7 @@
 import sys
 import time
 from daemon import runner
+from ServerMetrics import ServerMetrics
 
 
 class MetricsCollector():
@@ -13,8 +14,9 @@ class MetricsCollector():
         self.pidfile_timeout = 5
 
     def run(self):
+        server = ServerMetrics()
         while True:
-            print 'Running..'
+            print server.poll_metrics()
             time.sleep(10)
 
 
