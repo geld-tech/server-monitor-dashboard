@@ -50,19 +50,9 @@
                     <b-progress show-progress v-if="data" v-bind:max="100" class="w-80 mb-2">
                         <b-progress-bar variant="primary" v-bind:value="data.mem_percent" v-bind:label="data.mem_percent.toFixed(1)+'%' || '0'" height="20px"></b-progress-bar>
                     </b-progress>
-                </b-col>
-            </b-row>
-            <b-row align-v="start" align-h="around">
-                <b-col sm="4">
-                    <h3>SWAP</h3>
-                </b-col>
-                <b-col sm="8">
                     <b-progress show-progress v-if="data" v-bind:max="100" class="w-80 mb-2">
-                        <b-progress-bar
-                            variant="primary"
-                            v-bind:value="data.swap_usage['percent']"
-                            v-bind:label="data.swap_usage['percent'].toFixed(1)+'%' || '0'"
-                            height="20px">
+                        <b-progress-bar variant="warning" v-bind:value="data.swap_usage['percent']"
+                            v-bind:label="data.swap_usage['percent'].toFixed(1)+'%' || '0'" height="20px">
                         </b-progress-bar>
                     </b-progress>
                 </b-col>
@@ -82,8 +72,7 @@
                     <h3>Network</h3>
                 </b-col>
                 <b-col sm="8">
-                    <p v-if="data">Tx {{ data.network_io['bytes_sent'] }}</p>
-                    <p v-if="data">Rx {{ data.network_io['bytes_recv'] }}</p>
+                    <p v-if="data">Tx {{ data.network_io['bytes_sent'] }} / Rx {{ data.network_io['bytes_recv'] }}</p>
                 </b-col>
             </b-row>
             <b-row align-v="start" align-h="around">
@@ -118,15 +107,21 @@
                 <b-col sm="8">
                     <div v-if="data">
                         <b-btn v-b-toggle.processesText class="m-1">View All</b-btn>
-                        <b-collapse id="processesText">
-                          <b-card>
-                              <b-table striped hover id="processesTable"
-                                v-bind:items="data.processes"
-                                v-bind:fields="[{key:'pid',sortable:true}, {key:'name',sortable:true}, {key:'cpu_percent',sortable:true,sortDirection:'desc'}]"
-                                v-bind:per-page="12">
-                            </b-table>
-                          </b-card>
-                        </b-collapse>
+                    </div>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="12">
+                    <div v-if="data">
+                    <b-collapse id="processesText">
+                      <b-card>
+                          <b-table striped hover id="processesTable"
+                            v-bind:items="data.processes"
+                            v-bind:fields="[{key:'pid',sortable:true}, {key:'name',sortable:true}, {key:'cpu_percent',sortable:true,sortDirection:'desc'}]"
+                            v-bind:per-page="12">
+                        </b-table>
+                      </b-card>
+                    </b-collapse>
                     </div>
                 </b-col>
             </b-row>
