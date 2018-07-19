@@ -16,7 +16,7 @@ class MetricsCollector():
         self.stderr_path = '/dev/tty'
         self.pidfile_path = pid_file
         self.pidfile_timeout = 5
-        self.db_path = '/dev/shm/server-metrics.sqlite3'
+        self.db_path = '/dev/shm/monitor-collectord.sqlite3'
         self.db_conn = None
 
         atexit.register(self.stop)
