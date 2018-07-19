@@ -57,8 +57,15 @@ if [ ! -f server/config/settings.cfg ]; then
     cp -p server/config/settings.cfg.template server/config/settings.cfg
 fi
 
+# Run background metrics collector
+cd server/
+echo ""
+echo "### METRICS COLLECTOR ###"
+trap "python monitor-collectord.py stop" SIGINT
+python monitor-collectord.py start
+sleep 1
+
 # Run application locally on port :5000 (Press CTRL+C to quit)
 echo ""
 echo "### RUN ###"
-cd server/
 python application.py

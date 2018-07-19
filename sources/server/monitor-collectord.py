@@ -98,7 +98,7 @@ def is_running(pid_file):
 
 
 # Main
-PID_FILE = '/var/run/monitor-collectord.pid'
+PID_FILE = '/tmp/monitor-collectord.pid'
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
