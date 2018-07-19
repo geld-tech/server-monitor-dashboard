@@ -1,6 +1,5 @@
 [Unit]
 Description=__PACKAGE_DESC__
-RequiredBy=server-monitor-dashboard
 
 [Service]
 User=www-data
