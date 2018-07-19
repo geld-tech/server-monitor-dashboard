@@ -5,12 +5,6 @@
         <b-navbar-nav>
           <b-navbar-brand href="/"><img src="/static/images/geld.tech_32x32.png" width="30" height="30" alt="" /> __PACKAGE_NAME__</b-navbar-brand>
         </b-navbar-nav>
-        <b-navbar-nav class="ml-auto">
-            <b-nav-form @submit="onSubmit" @reset="onReset">
-              <b-form-input id="searchInput" type="search"  v-model="form.keyword" class="form-control mr-sm-2 ml-auto" placeholder="" aria-label="Search"></b-form-input>
-              <b-button class="my-2 my-sm-0" variant="primary" type="submit">Search</b-button>
-            </b-nav-form>
-        </b-navbar-nav>
     </b-navbar>
     <!-- Alerting -->
     <div class="alerting col-md-4 col-md-offset-4">
