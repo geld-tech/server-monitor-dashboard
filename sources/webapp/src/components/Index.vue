@@ -83,6 +83,12 @@
                     <div v-if="data">
                         <b-btn v-b-toggle.disksUsageText class="m-1">View Usage</b-btn>
                         <b-btn v-b-toggle.disksIOText class="m-1">View IO</b-btn>
+                    </div>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="8">
+                    <div v-if="data">
                         <b-collapse id="disksUsageText">
                           <b-card>
                               <ul>
@@ -90,6 +96,12 @@
                               </ul>
                           </b-card>
                         </b-collapse>
+                    </div>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="8">
+                    <div v-if="data">
                         <b-collapse id="disksIOText">
                           <b-card>
                               <ul>
