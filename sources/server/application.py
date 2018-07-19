@@ -188,14 +188,13 @@ def get_server_memory_percent():
         return False
 
 
-def get_server_processes(min_percent=0.1):
+def get_server_processes(max_count=12):
     try:
         processes = []
         for proc in psutil.process_iter():
-            if proc.pid > 1:
-                process = {'pid': proc.pid, 'name': proc.name(), 'cpu_percent': proc.cpu_percent()}
-                processes.append(process)
-        return processes
+            process = {'pid': proc.pid, 'name': proc.name(), 'cpu_percent': proc.cpu_percent()}
+            processes.append(process)
+        return sorted(processes, key=lambda p: p['cpu_percent'], reverse=True)[:max_count]
     except Exception, e:
         logger.error('Error retrieving processes: %s' % e)
         return False
