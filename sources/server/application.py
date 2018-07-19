@@ -199,6 +199,23 @@ def get_server_processes(max_count=12):
         logger.error('Error retrieving processes: %s' % e)
         return False
 
+def get_server_processes_with_mem():
+    properties = ['username', 'nice', 'memory_info', 'memory_percent', 'cpu_percent', 'cpu_times', 'name', 'status']
+    processes = []
+    procs_status = {}
+    for p in psutil.process_iter():
+        try:
+            p.dict = p.as_dict(properties)
+            try:
+                procs_status[p.dict['status']] += 1
+            except KeyError:
+                procs_status[p.dict['status']] = 1
+        except psutil.NoSuchProcess:
+            pass
+        else:
+            processes.append(p)
+    processes = sorted(processes, key=lambda p: p.dict['cpu_percent'], reverse=True)
+    return (processes, procs_status)  # return processes sorted by CPU and stats
 
 def get_disks_usage():
     try:
