@@ -5,8 +5,8 @@ Description=__PACKAGE_DESC__
 User=www-data
 Group=www-data
 WorkingDirectory=__PACKAGE_DIR__
-ExecStart=monitor-collectord.py start
-ExecStop=monitor-collectord.py stop
+ExecStart=__PACKAGE_DIR__/monitor-collectord.py start
+ExecStop=__PACKAGE_DIR__/monitor-collectord.py stop
 
 [Install]
 WantedBy=multi-user.target
