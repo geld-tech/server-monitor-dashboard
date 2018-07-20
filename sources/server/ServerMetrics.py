@@ -149,7 +149,7 @@ class ServerMetrics:
     def get_server_memory_percent(self):
         try:
             os_proc = psutil.Process(os.getpid())
-            mem_percent = os_proc.get_memory_info()[0] / float(2 ** 20)
+            mem_percent = os_proc.memory_info()[0] / float(2 ** 20)
             return mem_percent
         except Exception, e:
             self.logger.error('Error reading Memory percentage: %s' % e)
