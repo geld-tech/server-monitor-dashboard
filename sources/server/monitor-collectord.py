@@ -6,7 +6,7 @@ import sqlite3
 import sys
 import time
 
-from ServerMetrics import ServerMetrics
+from modules.ServerMetrics import ServerMetrics
 
 
 class MetricsCollector():
