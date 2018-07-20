@@ -122,7 +122,7 @@ class ServerMetrics:
 
     def get_server_cpu_percent(self):
         try:
-            return psutil.cpu_percent(interval=1)
+            return psutil.cpu_percent(interval=6)
         except Exception, e:
             self.logger.error('Error reading CPU percentage: %s' % e)
             return False
