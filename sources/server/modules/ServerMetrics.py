@@ -45,7 +45,7 @@ class ServerMetrics:
             disks_usage = self.get_disks_usage()
             disks_io = self.get_disks_io()
             swap_usage = self.get_swapdisk_usage()
-            network_io = self.get_network_io()
+            network_io = self.get_network_io()  # Requires to poll duringf interval to get rate
             data = {'hostname': hostname,
                     'platform': server_platform,
                     'system': server_system,
