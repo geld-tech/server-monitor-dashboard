@@ -12,6 +12,7 @@ cd .local_dev/
 # Replace place holders
 find . -type f | xargs sed -i "s/__PACKAGE_NAME__/localdev/g"
 find . -type f | xargs sed -i "s/__PACKAGE_DESC__/Running application locally/g"
+find . -type f | xargs sed -i "s/__PACKAGE_AUTHOR__/geld.tech/g"
 find . -type f | xargs sed -i "s/__VERSION__/0.0.1/g"
 find . -type f | xargs sed -i "s/__DATE__/01-01-1970/g"
 

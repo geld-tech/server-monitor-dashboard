@@ -45,6 +45,7 @@ before_install:
   # Replace version and build number with the Debian control file
   - find . -type f | xargs sed -i "s/__PACKAGE_NAME__/$PACKAGE_NAME/g"
   - find . -type f | xargs sed -i "s/__PACKAGE_DESC__/$PACKAGE_DESC/g"
+  - find . -type f | xargs sed -i "s/__PACKAGE_AUTHOR__/$PACKAGE_AUTHOR/g"
   - find . -type f | xargs sed -i "s/__VERSION__/$BUILD_VERSION/g"
   - find . -type f | xargs sed -i "s/__USER__/$BINTRAY_USER/g"
   - find . -type f | xargs sed -i "s/__DATE__/$BUILD_DATE/g"
