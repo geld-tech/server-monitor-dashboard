@@ -139,7 +139,7 @@ def get_server_release():
 
 def get_server_uptime():
     try:
-        uptime = time.time() - psutil.BOOT_TIME
+        uptime = time.time() - psutil.boot_time()
         return uptime
     except Exception, e:
         logger.error('Error reading uptime: %s' % e)

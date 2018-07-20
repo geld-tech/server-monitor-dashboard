@@ -112,7 +112,7 @@ class ServerMetrics:
 
     def get_server_uptime(self):
         try:
-            uptime = time.time() - psutil.BOOT_TIME
+            uptime = time.time() - psutil.boot_time()
             return uptime
         except Exception, e:
             self.logger.error('Error reading uptime: %s' % e)
