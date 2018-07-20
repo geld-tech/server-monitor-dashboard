@@ -2,26 +2,18 @@
   <div class="index">
     <!-- Container -->
     <b-container class="bv-example-row">
-        <div v-if="loading" class="loading">
-            <h1>Loading...</h1>
+        <div v-if="Object.keys(data).length === 0" class="loading">
+            <h6>Loading...</h6>
             <img src="/static/images/spinner.gif" width="32" height="32"/>
         </div>
         <div v-else>
-            <h1>{{ msg }}</h1>
+            <h3>{{ msg }}</h3>
             <b-row align-v="start" align-h="around">
                 <b-col sm="4">
                     <h5>Hostname</h5>
                 </b-col>
                 <b-col sm="8">
                     <p v-if="data">{{ data.hostname }}</p>
-                </b-col>
-            </b-row>
-            <b-row align-v="start" align-h="around">
-                <b-col sm="4">
-                    <h5>Platform</h5>
-                </b-col>
-                <b-col sm="8">
-                    <p v-if="data">{{ data.platform }}</p>
                 </b-col>
             </b-row>
             <b-row align-v="start" align-h="around">
@@ -47,8 +39,8 @@
                     <h5>Memory</h5>
                 </b-col>
                 <b-col sm="8">
-                    <b-progress show-progress v-if="data && data.mem_percent !== undefined" v-bind:max="100" class="w-80 mb-2">
-                        <b-progress-bar variant="primary" v-bind:value="data.mem_percent" v-bind:label="data.mem_percent.toFixed(1)+'%' || '0'" height="20px"></b-progress-bar>
+                    <b-progress show-progress v-if="data && data.vmem_percent !== undefined" v-bind:max="100" class="w-80 mb-2">
+                        <b-progress-bar variant="primary" v-bind:value="data.vmem_percent" v-bind:label="data.vmem_percent.toFixed(1)+'%' || '0'" height="20px"></b-progress-bar>
                     </b-progress>
                     <b-progress show-progress v-if="data && data.swap_usage !== undefined && data.swap_usage['percent'] > 1" v-bind:max="100" class="w-80 mb-2">
                         <b-progress-bar variant="warning" v-bind:value="data.swap_usage['percent']"
@@ -62,7 +54,7 @@
                     <h5>Temperature</h5>
                 </b-col>
                 <b-col sm="8">
-                    <b-progress show-progress v-if="data" v-bind:max="100" class="w-80 mb-2">
+                    <b-progress show-progress v-if="data && data.cpu_temp !== undefined" v-bind:max="100" class="w-80 mb-2">
                         <b-progress-bar variant="primary" v-bind:value="data.cpu_temp" v-bind:label="data.cpu_temp+'&deg; C'" height="20px"></b-progress-bar>
                     </b-progress>
                 </b-col>
@@ -72,10 +64,10 @@
                     <h5>Disks</h5>
                 </b-col>
                 <b-col sm="8">
-                    <div v-if="data">
-                        <ul>
-                            <li v-for="disk in data.disks_usage" v-bind:key="disk"><strong>{{ disk['mountpoint'] }}</strong>: {{ disk['percent'] }} %</li>
-                        </ul>
+                    <div v-if="data && data.disks_usage" v-for="disk in data.disks_usage" v-bind:key="disk">
+                        <b-progress show-progress v-if="disk['mountpoint']" v-bind:max="100" class="w-80 mb-2">
+                            <b-progress-bar variant="primary" v-bind:value="disk['percent']" v-bind:label="disk['mountpoint']+' '+disk['percent']+'%'" height="20px"></b-progress-bar>
+                        </b-progress>
                     </div>
                 </b-col>
             </b-row>
@@ -91,7 +83,7 @@
                     <div v-if="data">
                     <b-collapse id="processesText">
                       <b-card>
-                          <b-table striped hover id="processesTable"
+                          <b-table striped hover class="processesTable"
                             v-bind:items="data.processes"
                             v-bind:fields="[{key:'pid',sortable:true}, {key:'name',sortable:true}, {key:'cpu_percent',sortable:true,sortDirection:'desc'}]"
                             v-bind:per-page="12">
@@ -108,7 +100,7 @@
 
 <script>
 export default {
-  props: ['data'],
+  props: ['loading', 'data'],
   name: 'Info',
   data () {
     return {
@@ -133,7 +125,7 @@ li {
 a {
   color: #42b983;
 }
-#processesTable{
-  font-size: 10x;
+.processesTable{
+  font-size: 14px;
 }
 </style>

@@ -14,7 +14,7 @@
     </div>
     <!-- Container -->
     <div id="app-container">
-        <router-view v-bind:data="data"></router-view>
+        <router-view v-bind:data="data" v-bind:loading="loading"></router-view>
     </div>
   </div>
 </template>
@@ -54,6 +54,7 @@ export default {
   },
   methods: {
     fetchResourcesData() {
+      this.loading = true
       fetchData()
         .then(response => {
           this.data = response.data
