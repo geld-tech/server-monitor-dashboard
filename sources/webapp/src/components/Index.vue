@@ -50,7 +50,7 @@
                     <b-progress show-progress v-if="data" v-bind:max="100" class="w-80 mb-2">
                         <b-progress-bar variant="primary" v-bind:value="data.mem_percent" v-bind:label="data.mem_percent.toFixed(1)+'%' || '0'" height="20px"></b-progress-bar>
                     </b-progress>
-                    <b-progress show-progress v-if="data" v-bind:max="100" class="w-80 mb-2">
+                    <b-progress show-progress v-if="data && data.swap_usage['percent'] > 1" v-bind:max="100" class="w-80 mb-2">
                         <b-progress-bar variant="warning" v-bind:value="data.swap_usage['percent']"
                             v-bind:label="data.swap_usage['percent'].toFixed(1)+'%' || '0'" height="20px">
                         </b-progress-bar>
