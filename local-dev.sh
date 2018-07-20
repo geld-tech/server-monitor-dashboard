@@ -62,7 +62,7 @@ rm -f /dev/shm/monitor-collectord.sqlite3
 cd server/
 echo ""
 echo "### METRICS COLLECTOR ###"
-trap "python monitor-collectord.py stop" SIGINT
+trap "python monitor-collectord.py stop" INT TERM
 python monitor-collectord.py start
 sleep 1
 
