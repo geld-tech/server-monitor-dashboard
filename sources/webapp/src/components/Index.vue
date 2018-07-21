@@ -54,7 +54,7 @@
                     <h5>Temperature</h5>
                 </b-col>
                 <b-col sm="8">
-                    <b-progress show-progress v-if="data && data.cpu_temp !== undefined" v-bind:max="100" class="w-80 mb-2">
+                    <b-progress show-progress v-if="data && data.cpu_temp !== false" v-bind:max="100" class="w-80 mb-2">
                         <b-progress-bar variant="primary" v-bind:value="data.cpu_temp" v-bind:label="data.cpu_temp+'&deg; C'" height="20px"></b-progress-bar>
                     </b-progress>
                 </b-col>
