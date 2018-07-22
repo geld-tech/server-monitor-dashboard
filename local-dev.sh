@@ -65,7 +65,7 @@ echo ""
 echo "### METRICS COLLECTOR ###"
 trap "python monitor-collectord.py stop" INT TERM
 python monitor-collectord.py start
-sleep 2
+sleep 10
 
 # Run application locally on port :5000 (Press CTRL+C to quit)
 echo ""
