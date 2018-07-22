@@ -14,13 +14,17 @@
     </div>
     <!-- Container -->
     <div id="app-container">
-        <router-view v-bind:data="data" v-bind:loading="loading"></router-view>
+        <router-view
+            v-bind:data="data"
+            v-bind:status_data="status_data"
+            v-bind:loading="loading">
+        </router-view>
     </div>
   </div>
 </template>
 
 <script>
-import { fetchData } from '@/api'
+import { fetchData, fetchStatus } from '@/api'
 
 export default {
   name: 'App',
@@ -30,6 +34,7 @@ export default {
         keyword: ''
       },
       data: {},
+      status_data: {},
       dismissCountDown: 0,
       error: '',
       loading: false,
@@ -41,6 +46,7 @@ export default {
     this.loading = false
     /* Trick to reset/clear native browser form validation state */
     this.data = {}
+    this.status_data = {}
     this.show = false
     this.$nextTick(() => { this.show = true })
     /* Fetching the data */
@@ -64,6 +70,13 @@ export default {
           this.error = err.message
           this.loading = false
         })
+      fetchStatus()
+        .then(response => {
+          this.status_data = response.data
+        })
+        .catch(err => {
+          this.error = err.message
+        })
     },
     onSubmit(evt) {
       evt.preventDefault()
@@ -75,6 +88,7 @@ export default {
       if (searchKeyword !== '') {
         /* Trick to reset/clear native browser form validation state */
         this.data = {}
+        this.status_data = {}
         this.show = false
         this.$nextTick(() => { this.show = true })
         /* Fetching the data */
@@ -89,6 +103,13 @@ export default {
             this.loading = false
             this.dismissCountDown = 6
           })
+        fetchStatus()
+          .then(response => {
+            this.status_data = response.data
+          })
+          .catch(err => {
+            this.error = err.message
+          })
       }
     },
     onReset(evt) {
@@ -96,6 +117,7 @@ export default {
       /* Reset our form values */
       this.form.keyword = ''
       this.data = {}
+      this.status_data = {}
       this.loading = false
       /* Trick to reset/clear native browser form validation state */
       this.show = false

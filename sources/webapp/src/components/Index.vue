@@ -100,7 +100,7 @@
 
 <script>
 export default {
-  props: ['loading', 'data'],
+  props: ['loading', 'data', 'status_data'],
   name: 'Info',
   data () {
     return {
