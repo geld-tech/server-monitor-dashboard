@@ -75,11 +75,11 @@ def server_information():
     try:
         data = []
         server = db_session.query(Server).filter_by(hostname=server_metrics.get_server_hostname())[0]
-        for sys_status in db_session.query(SystemInformation).filter_by(server=server):
+        for sys_info in db_session.query(SystemInformation).filter_by(server=server):
             status = {}
-            status['platform'] = sys_status.platform
-            status['system'] = sys_status.system
-            status['release'] = sys_status.release
+            status['platform'] = sys_info.platform
+            status['system'] = sys_info.system
+            status['release'] = sys_info.release
             data.append({server_metrics.get_server_hostname(): status})
         return jsonify({'data': data}), 200
     except Exception, e:
