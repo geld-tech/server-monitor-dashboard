@@ -1,92 +1,56 @@
 #!/usr/bin/env python
 import atexit
 from daemon import runner
-import datetime
 import sys
 import time
+from modules.Models import Base, Server, SystemInformation, SystemStatus, Process
 from modules.ServerMetrics import ServerMetrics
-from sqlalchemy import Column, ForeignKey, Integer, Float, String, DateTime
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-Base = declarative_base()
-engine = None
-
-
-class Server(Base):
-    __tablename__ = 'server'
-    id = Column(Integer, primary_key=True)
-    hostname = Column(String(250), nullable=False)
-
-
-class SystemInformation(Base):
-    __tablename__ = 'system_information'
-    id = Column(Integer, primary_key=True)
-    platform = Column(String(250))
-    system = Column(String(128))
-    release = Column(String(128), nullable=False)
-    server_id = Column(Integer, ForeignKey('server.id'))
-    server = relationship(Server)
-
-
-class SystemStatus(Base):
-    __tablename__ = 'system_status'
-    id = Column(Integer, primary_key=True)
-    cpu_percent = Column(Float)
-    vmem_percent = Column(Float)
-    cpu_temp = Column(Float)
-    date_time = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
-    server_id = Column(Integer, ForeignKey('server.id'))
-    server = relationship(Server)
-
-
-class Process(Base):
-    __tablename__ = 'processes'
-    id = Column(Integer, primary_key=True)
-    pid = Column(String(16))
-    name = Column(String(1024))
-    cpu_percent = Column(Float)
-    date_time = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
-    server_id = Column(Integer, ForeignKey('server.id'))
-    server = relationship(Server)
-
 
 class MetricsCollector():
-    def __init__(self, pid_file, session):
-        self.pidfile_path = pid_file
-        self.db_session = session
-        self.server = None
-
+    def __init__(self, pid_file, poll_interval=30, db_path='/dev/shm/monitor-collectord.sqlite3'):
         self.stdin_path = '/dev/null'
         self.stdout_path = '/dev/tty'
         self.stderr_path = '/dev/tty'
         self.pidfile_timeout = 5
-        self.db_path = '/dev/shm/monitor-collectord.sqlite3'
-        self.db_conn = None
-
-        atexit.register(self.stop)
+        self.pidfile_path = pid_file
+        self.poll_interval = poll_interval
+        self.db_path = db_path
+        self.db_session = None
+        self.server = None
+        atexit.register(self.db_close)
 
     def run(self):
-        server = ServerMetrics()
-        data = server.poll_metrics()
-        self.server = Server(hostname=data['hostname'])
+        sm = ServerMetrics()
+        hostname = sm.get_server_hostname()
+        self.db_open(hostname)
+
+        data = sm.poll_metrics()
         self.store_system_information(data)
         while True:
-            data = server.poll_metrics()
+            data = sm.poll_metrics()
             self.store_system_status(data)
             self.store_processes(data)
-            time.sleep(POLL_INTERVAL)
+            time.sleep(self.poll_interval)
 
-    def stop(self):
-        self.db_session.close()
+    def db_open(self, hostname='localhost'):
+        engine = create_engine('sqlite:///'+self.db_path)
+        Base.metadata.bind = engine
+        Base.metadata.create_all(engine)
+        DBSession = sessionmaker(bind=engine)
+        self.db_session = DBSession()
 
-    def disconnect_db(self):
+        self.server = Server(hostname=hostname)
+        self.db_session.add(self.server)
+        self.db_session.commit()
+
+    def db_close(self):
         if self.db_session:
             self.db_session.close()
 
-    def rollback(self):
+    def db_rollback(self):
         self.db_session.rollback()
 
     def store_system_information(self, data):
@@ -124,7 +88,6 @@ def is_running(pid_file):
 
 # Main
 PID_FILE = '/tmp/monitor-collectord.pid'
-SQLITE_FILE = '/dev/shm/monitor-collectord.sqlite3'
 POLL_INTERVAL = 10
 
 if __name__ == "__main__":
@@ -138,13 +101,7 @@ if __name__ == "__main__":
         elif 'stop' == sys.argv[1] and not is_running(PID_FILE)[0]:
             print '%s is not running.' % sys.argv[0]
         else:
-            engine = create_engine('sqlite:///'+SQLITE_FILE)
-            Base.metadata.create_all(engine)
-            Base.metadata.bind = engine
-            DBSession = sessionmaker(bind=engine)
-            session = DBSession()
-
-            collector = MetricsCollector(PID_FILE, session)
+            collector = MetricsCollector(PID_FILE, poll_interval=POLL_INTERVAL)
             daemon = runner.DaemonRunner(collector)
             daemon.do_action()  # start|stop|restart as sys.argv[1]
 
