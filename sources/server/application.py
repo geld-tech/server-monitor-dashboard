@@ -10,7 +10,7 @@ from optparse import OptionParser
 from flask import Flask, render_template, jsonify
 
 from modules.ServerMetrics import ServerMetrics
-from modules.Models import Base, Server, SystemInformation, SystemStatus
+from modules.Models import Base, Server, SystemInformation, SystemStatus, Process
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -84,6 +84,24 @@ def server_information():
         return jsonify({'data': data}), 200
     except Exception, e:
         logger.error('Error retrieving server information: %s' % e)
+        return jsonify({'data': {}, 'error': 'Could not retrieve server resources status, check logs for more details..'}), 500
+
+
+@app.route("/processes/history", strict_slashes=False)
+def processes_history():
+    try:
+        data = []
+        server = db_session.query(Server).filter_by(hostname=server_metrics.get_server_hostname())[0]
+        for proc_status in db_session.query(Process).filter_by(server=server):
+            status = {}
+            status['pid'] = proc_status.pid
+            status['name'] = proc_status.name
+            status['cpu_percent'] = proc_status.cpu_percent
+            status['date_time'] = proc_status.date_time
+            data.append({proc_status.name: status})
+        return jsonify({'data': data}), 200
+    except Exception, e:
+        logger.error('Error retrieving processes history: %s' % e)
         return jsonify({'data': {}, 'error': 'Could not retrieve server resources status, check logs for more details..'}), 500
 
 
