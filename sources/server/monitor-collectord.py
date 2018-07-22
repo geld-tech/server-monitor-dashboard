@@ -3,8 +3,8 @@ import atexit
 from daemon import runner
 import sys
 import time
-from modules.Models import Base, Server, SystemInformation, SystemStatus, Process
 from modules.ServerMetrics import ServerMetrics
+from modules.Models import Base, Server, SystemInformation, SystemStatus, Process
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 

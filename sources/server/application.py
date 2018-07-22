@@ -10,6 +10,10 @@ from optparse import OptionParser
 from flask import Flask, render_template, jsonify
 
 from modules.ServerMetrics import ServerMetrics
+from modules.Models import Base, Server, SystemStatus
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
 app.debug = True
@@ -23,6 +27,13 @@ logging.basicConfig(format='[%(asctime)-15s] [%(threadName)s] %(levelname)s %(me
 logger = logging.getLogger('root')
 
 server_metrics = ServerMetrics()
+
+# DB Session
+db_path = '/dev/shm/monitor-collectord.sqlite3'
+engine = create_engine('sqlite:///'+db_path)
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+db_session = DBSession()
 
 
 @app.route("/")
@@ -39,6 +50,24 @@ def server_usage():
     except Exception, e:
         logger.error('Error retrieving server resources usage: %s' % e)
         return jsonify({'data': {}, 'error': 'Could not retrieve server resources usage, check logs for more details..'}), 500
+
+
+@app.route("/server/status", strict_slashes=False)
+def server_status():
+    try:
+        data = []
+        server = db_session.query(Server).filter_by(hostname=server_metrics.get_server_hostname())[0]
+        for sys_status in db_session.query(SystemStatus).filter_by(server=server):
+            status = {}
+            status['cpu_percent'] = sys_status.cpu_percent
+            status['vmem_percent'] = sys_status.vmem_percent
+            status['cpu_temp'] = sys_status.cpu_temp
+            status['date_time'] = sys_status.date_time
+            data.append({server_metrics.get_server_hostname(): status})
+        return jsonify({'data': data}), 200
+    except Exception, e:
+        logger.error('Error retrieving server resources usage: %s' % e)
+        return jsonify({'data': {}, 'error': 'Could not retrieve server resources status, check logs for more details..'}), 500
 
 
 @app.route("/server/hostname")
