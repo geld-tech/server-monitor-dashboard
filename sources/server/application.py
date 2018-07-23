@@ -4,6 +4,7 @@
     Display server resources usage
 """
 import ConfigParser
+import datetime
 import logging
 import logging.handlers
 from optparse import OptionParser
@@ -13,6 +14,7 @@ from modules.ServerMetrics import ServerMetrics
 from modules.Models import Base, Server, SystemInformation, SystemStatus, Process
 
 from sqlalchemy import create_engine
+from sqlalchemy import func
 from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
@@ -45,29 +47,50 @@ def index():
 @app.route("/server/usage", strict_slashes=False)
 def server_usage():
     try:
-        data = server_metrics.poll_metrics()
+        data = {}
+        hostname = server_metrics.get_server_hostname()
+        server = db_session.query(Server).filter_by(hostname=hostname).first()
+
+        data['hostname'] = hostname
+        data['platform'] = server_metrics.get_server_platform()
+        data['system'] = server_metrics.get_server_system()
+        data['release'] = server_metrics.get_server_release()
+        data['architecture'] = server_metrics.get_server_architecture()
+        data['uptime'] = server_metrics.get_server_uptime()
+        data['disks_usage'] = server_metrics.get_disks_usage()
+        data['swap_usage'] = server_metrics.get_swapdisk_usage()
+
+        sys_stat = db_session.query(SystemStatus).filter(func.DATE(SystemStatus.date_time) == datetime.date.today()).order_by(SystemStatus.id.desc()).first()
+        data['cpu_percent'] = sys_stat.cpu_percent
+        data['vmem_percent'] = sys_stat.vmem_percent
+        data['cpu_temp'] = sys_stat.cpu_temp
+
+        processes_data = []
+        for proc_status in db_session.query(Process).filter_by(server=server).order_by(Process.id):
+            status = {}
+            status['pid'] = proc_status.pid
+            status['name'] = proc_status.name
+            status['cpu_percent'] = proc_status.cpu_percent
+            status['date_time'] = proc_status.date_time
+            processes_data.append({proc_status.name: status})
+        data['processes'] = processes_data
+
+        cpu_percent_data = []
+        vmem_percent_data = []
+        cpu_temp_data = []
+        date_time_data = []
+        for sys_stat in db_session.query(SystemStatus).filter_by(server=server).filter(
+                        func.DATE(SystemStatus.date_time) == datetime.date.today()).order_by(SystemStatus.id):
+            date_time_data.append(sys_stat.date_time)
+            cpu_percent_data.append(sys_stat.cpu_percent)
+            vmem_percent_data.append(sys_stat.vmem_percent)
+            cpu_temp_data.append(sys_stat.cpu_temp)
+        data['graphs_data'] = {'cpu_percent': cpu_percent_data, 'vmem_percent': vmem_percent_data, 'cpu_temp': cpu_temp_data, 'date_time': date_time_data}
+
         return jsonify({'data': data}), 200
     except Exception, e:
         logger.error('Error retrieving server resources usage: %s' % e)
         return jsonify({'data': {}, 'error': 'Could not retrieve server resources usage, check logs for more details..'}), 500
-
-
-@app.route("/server/status", strict_slashes=False)
-def server_status():
-    try:
-        data = []
-        server = db_session.query(Server).filter_by(hostname=server_metrics.get_server_hostname())[0]
-        for sys_status in db_session.query(SystemStatus).filter_by(server=server):
-            status = {}
-            status['cpu_percent'] = sys_status.cpu_percent
-            status['vmem_percent'] = sys_status.vmem_percent
-            status['cpu_temp'] = sys_status.cpu_temp
-            status['date_time'] = sys_status.date_time
-            data.append({server_metrics.get_server_hostname(): status})
-        return jsonify({'data': data}), 200
-    except Exception, e:
-        logger.error('Error retrieving server resources usage: %s' % e)
-        return jsonify({'data': {}, 'error': 'Could not retrieve server resources status, check logs for more details..'}), 500
 
 
 @app.route("/server/information", strict_slashes=False)
