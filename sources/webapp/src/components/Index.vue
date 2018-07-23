@@ -112,7 +112,7 @@ import Status from './charts/Status.js'
 
 export default {
   name: 'Info',
-  props: ['loading', 'data', 'status_data'],
+  props: ['loading', 'data'],
   components: {
     Status
   },
