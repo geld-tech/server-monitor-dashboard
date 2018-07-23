@@ -93,15 +93,29 @@
                     </div>
                 </b-col>
             </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="12">
+                    <div v-if="data" class="Chart__list">
+                        <div class="Chart">
+                            <status></status>
+                        </div>
+                    </div>
+                </b-col>
+            </b-row>
         </div>
     </b-container>
   </div>
 </template>
 
 <script>
+import Status from './charts/Status.js'
+
 export default {
-  props: ['loading', 'data', 'status_data'],
   name: 'Info',
+  props: ['loading', 'data', 'status_data'],
+  components: {
+    Status
+  },
   data () {
     return {
       msg: 'Resources'
@@ -127,5 +141,17 @@ a {
 }
 .processesTable{
   font-size: 14px;
+}
+.container {
+  max-width: 800px;
+  margin:  0 auto;
+}
+.Chart {
+  background: #FFFFFF;
+}
+.Chart h2 {
+  margin-top: 0;
+  padding: 15px 0;
+  border-bottom: 1px solid #323d54;
 }
 </style>
