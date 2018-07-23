@@ -16,21 +16,21 @@ class ServerMetrics:
         logging.basicConfig(format='[%(asctime)-15s] [%(threadName)s] %(levelname)s %(message)s', level=logging.INFO)
         self.logger = logging.getLogger('root')
         self._data = {}
+        self.hostname = self._get_server_hostname()
         self.collect_metrics()
 
     def get(self):
         return self._data
 
     def poll_metrics(self):
-        self._data = self._get_metrics()
+        self.collect_metrics()
         return self._data
 
     def collect_metrics(self):
-        return self._data
+        self._data = self._get_metrics()
 
     def _get_metrics(self):
         try:
-            hostname = self.get_server_hostname()
             server_platform = self.get_server_platform()
             server_system = self.get_server_system()
             server_release = self.get_server_release()
@@ -45,8 +45,8 @@ class ServerMetrics:
             disks_usage = self.get_disks_usage()
             disks_io = self.get_disks_io()
             swap_usage = self.get_swapdisk_usage()
-            network_io = self.get_network_io()  # Requires to poll duringf interval to get rate
-            data = {'hostname': hostname,
+            network_io = self.get_network_io()  # Requires to poll during interval to get rate
+            data = {'hostname': self.get_server_hostname(),
                     'platform': server_platform,
                     'system': server_system,
                     'release': server_release,
@@ -76,13 +76,16 @@ class ServerMetrics:
             self.logger.error('Error reading temperature: %s' % e)
             return False
 
-    def get_server_hostname(self):
+    def _get_server_hostname(self):
         try:
             hostname = socket.gethostname()
             return hostname
         except Exception, e:
             self.logger.error('Error reading hostname: %s' % e)
             return False
+
+    def get_server_hostname(self):
+        return self.hostname
 
     def get_server_platform(self):
         try:
