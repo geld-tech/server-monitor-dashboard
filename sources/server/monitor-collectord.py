@@ -24,13 +24,16 @@ class MetricsCollector():
         atexit.register(self.db_close)
 
     def run(self):
+        # Initialise object to collect metrics
         sm = ServerMetrics()
         hostname = sm.get_server_hostname()
+        # Connect to database
         self.db_open(hostname)
-
+        # First metrics poll to instantiate system information
         data = sm.poll_metrics()
         self.store_system_information(data)
         while True:
+            # Poll and store
             ts = datetime.datetime.utcnow()
             data = sm.poll_metrics()
             self.store_system_status(ts, data)
@@ -74,7 +77,7 @@ class MetricsCollector():
 
     def store_processes(self, timestamp, data):
         for proc in data['processes']:
-            if proc['cpu_percent'] > 0.9:  # Won't store unrelevant information
+            if proc['cpu_percent'] > 0.9:  # Won't store irrelevant information
                 process = Process(pid=proc['pid'],
                                   name=proc['name'],
                                   cpu_percent=proc['cpu_percent'],
