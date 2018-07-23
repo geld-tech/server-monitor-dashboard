@@ -7,6 +7,7 @@ import ConfigParser
 import datetime
 import logging
 import logging.handlers
+import sys
 from optparse import OptionParser
 from flask import Flask, render_template, jsonify
 
@@ -61,9 +62,10 @@ def server_usage():
         data['swap_usage'] = server_metrics.get_swapdisk_usage()
 
         sys_stat = db_session.query(SystemStatus).filter(func.DATE(SystemStatus.date_time) == datetime.date.today()).order_by(SystemStatus.id.desc()).first()
-        data['cpu_percent'] = sys_stat.cpu_percent
-        data['vmem_percent'] = sys_stat.vmem_percent
-        data['cpu_temp'] = sys_stat.cpu_temp
+        if sys_stat:
+            data['cpu_percent'] = sys_stat.cpu_percent
+            data['vmem_percent'] = sys_stat.vmem_percent
+            data['cpu_temp'] = sys_stat.cpu_temp
 
         processes_data = []
         for proc_status in db_session.query(Process).filter_by(server=server).order_by(Process.id):
@@ -89,7 +91,8 @@ def server_usage():
 
         return jsonify({'data': data}), 200
     except Exception, e:
-        logger.error('Error retrieving server resources usage: %s' % e)
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        logger.error('Error retrieving server resources usage: %s (line=%d)' % (e, exc_tb.tb_lineno))
         return jsonify({'data': {}, 'error': 'Could not retrieve server resources usage, check logs for more details..'}), 500
 
 
