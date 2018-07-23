@@ -56,7 +56,10 @@ class MetricsCollector():
         self.db_session.rollback()
 
     def store_system_information(self, data):
-        sys_info = SystemInformation(platform=data['platform'], system=data['system'], release=data['release'], server=self.server)
+        sys_info = SystemInformation(platform=data['platform'],
+                                     system=data['system'],
+                                     release=data['release'],
+                                     server=self.server)
         self.db_session.add(sys_info)
         self.db_session.commit()
 
@@ -71,8 +74,12 @@ class MetricsCollector():
 
     def store_processes(self, timestamp, data):
         for proc in data['processes']:
-            if proc['cpu_percent'] > 0.9:  # Won't store unhelpful information
-                process = Process(pid=proc['pid'], name=proc['name'], cpu_percent=proc['cpu_percent'], date_time=timestamp, server=self.server)
+            if proc['cpu_percent'] > 0.9:  # Won't store unrelevant information
+                process = Process(pid=proc['pid'],
+                                  name=proc['name'],
+                                  cpu_percent=proc['cpu_percent'],
+                                  date_time=timestamp,
+                                  server=self.server)
                 self.db_session.add(process)
                 self.db_session.commit()
 
