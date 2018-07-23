@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import atexit
 from daemon import runner
+import datetime
 import sys
 import time
 from modules.ServerMetrics import ServerMetrics
@@ -30,9 +31,10 @@ class MetricsCollector():
         data = sm.poll_metrics()
         self.store_system_information(data)
         while True:
+            ts = datetime.datetime.utcnow()
             data = sm.poll_metrics()
-            self.store_system_status(data)
-            self.store_processes(data)
+            self.store_system_status(ts, data)
+            self.store_processes(ts, data)
             time.sleep(self.poll_interval)
 
     def db_open(self, hostname='localhost'):
@@ -58,15 +60,19 @@ class MetricsCollector():
         self.db_session.add(sys_info)
         self.db_session.commit()
 
-    def store_system_status(self, data):
-        sys_status = SystemStatus(cpu_percent=data['cpu_percent'], vmem_percent=data['vmem_percent'], cpu_temp=data['cpu_temp'], server=self.server)
+    def store_system_status(self, timestamp, data):
+        sys_status = SystemStatus(cpu_percent=data['cpu_percent'],
+                                  vmem_percent=data['vmem_percent'],
+                                  cpu_temp=data['cpu_temp'],
+                                  date_time=timestamp,
+                                  server=self.server)
         self.db_session.add(sys_status)
         self.db_session.commit()
 
-    def store_processes(self, data):
+    def store_processes(self, timestamp, data):
         for proc in data['processes']:
             if proc['cpu_percent'] > 0.9:  # Won't store unhelpful information
-                process = Process(pid=proc['pid'], name=proc['name'], cpu_percent=proc['cpu_percent'], server=self.server)
+                process = Process(pid=proc['pid'], name=proc['name'], cpu_percent=proc['cpu_percent'], date_time=timestamp, server=self.server)
                 self.db_session.add(process)
                 self.db_session.commit()
 
