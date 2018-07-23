@@ -104,7 +104,7 @@ def is_running(pid_file):
 
 # Main
 PID_FILE = '/tmp/monitor-collectord.pid'
-POLL_INTERVAL = 10
+POLL_INTERVAL = 30
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
