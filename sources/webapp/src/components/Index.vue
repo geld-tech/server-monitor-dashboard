@@ -97,9 +97,14 @@
                 <b-col sm="12">
                     <div v-if="data" class="Chart__list">
                         <div class="Chart">
-                            <status></status>
+                            <status v-bind:graphs_data="data.graphs_data"></status>
                         </div>
                     </div>
+                </b-col>
+            </b-row>
+            <b-row align-v="start" align-h="around">
+                <b-col sm="12">
+                    <hr />
                 </b-col>
             </b-row>
         </div>

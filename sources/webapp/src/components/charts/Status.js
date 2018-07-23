@@ -12,23 +12,31 @@ var chartColors = {
 
 export default {
   extends: Line,
+  props: ['graphs_data'],
   mounted () {
     this.renderChart({
-      labels: ['12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
+      labels: this.graphs_data.date_time,
       datasets: [
         {
           label: 'CPU',
-          fill: true,
+          fill: false,
           backgroundColor: chartColors.red,
           borderColor: chartColors.red,
-          data: [40, 39, 10, 40, 39, 80, 40]
+          data: this.graphs_data.cpu_percent
         },
         {
           label: 'Memory',
-          fill: true,
+          fill: false,
           backgroundColor: chartColors.blue,
           borderColor: chartColors.blue,
-          data: [60, 55, 32, 10, 2, 12, 53]
+          data: this.graphs_data.vmem_percent
+        },
+        {
+          label: 'Temperature',
+          fill: false,
+          backgroundColor: chartColors.yellow,
+          borderColor: chartColors.yellow,
+          data: this.graphs_data.cpu_temp
         }
       ]
     },

@@ -50,7 +50,7 @@ export default {
     this.loading = true
     this.fetchResourcesData()
     /* Sets interval for auto-refresh */
-    this.refreshInterval = window.setInterval(this.fetchResourcesData, 6000)
+    this.refreshInterval = window.setInterval(this.fetchResourcesData, 15000)
   },
   beforeDestroy() {
     window.clearInterval(this.refreshInterval)
