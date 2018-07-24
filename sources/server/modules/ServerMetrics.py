@@ -69,8 +69,11 @@ class ServerMetrics:
 
     def get_server_temperature(self):
         try:
-            with open("/sys/class/thermal/thermal_zone0/temp") as temp_file:
-                cpu_temp = int(temp_file.read()) / 1000
+            if os.path.isfile('/sys/class/thermal/thermal_zone0/temp'):
+                with open('/sys/class/thermal/thermal_zone0/temp') as temp_file:
+                    cpu_temp = int(temp_file.read()) / 1000
+            else:
+                return -273
             return cpu_temp
         except Exception, e:
             self.logger.error('Error reading temperature: %s' % e)
