@@ -27,6 +27,7 @@ class SystemStatus(Base):
     id = Column(Integer, primary_key=True)
     cpu_percent = Column(Float)
     vmem_percent = Column(Float)
+    swap_percent = Column(Float)
     cpu_temp = Column(Float)
     date_time = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
     server_id = Column(Integer, ForeignKey('server.id'))

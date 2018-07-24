@@ -70,6 +70,7 @@ class MetricsCollector():
         sys_status = SystemStatus(cpu_percent=data['cpu_percent'],
                                   vmem_percent=data['vmem_percent'],
                                   cpu_temp=data['cpu_temp'],
+                                  swap_percent=data['swap_usage']['percent'],
                                   date_time=timestamp,
                                   server=self.server)
         self.db_session.add(sys_status)
@@ -120,7 +121,7 @@ if __name__ == "__main__":
             collector = MetricsCollector(PID_FILE, poll_interval=POLL_INTERVAL)
             daemon = runner.DaemonRunner(collector)
             daemon.do_action()  # start|stop|restart as sys.argv[1]
-
+            running, pid = is_running(PID_FILE)
             sys.exit(0)
     else:
         print "Usage: %s start|stop|restart|status" % sys.argv[0]

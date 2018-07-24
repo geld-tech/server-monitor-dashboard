@@ -48,7 +48,10 @@ def index():
 @app.route("/server/usage", strict_slashes=False)
 def server_usage():
     try:
+        now = datetime.datetime.utcnow()
+        last_2_hours = now - datetime.timedelta(hours=24)
         data = {}
+
         hostname = server_metrics.get_server_hostname()
         server = db_session.query(Server).filter_by(hostname=hostname).first()
 
@@ -61,7 +64,7 @@ def server_usage():
         data['disks_usage'] = server_metrics.get_disks_usage()
         data['swap_usage'] = server_metrics.get_swapdisk_usage()
 
-        sys_stat = db_session.query(SystemStatus).filter(func.DATE(SystemStatus.date_time) == datetime.datetime.utcnow().date()).order_by(SystemStatus.id.desc()).first()
+        sys_stat = db_session.query(SystemStatus).filter(func.DATE(SystemStatus.date_time) == now.date()).order_by(SystemStatus.id.desc()).first()
         if sys_stat:
             data['cpu_percent'] = sys_stat.cpu_percent
             data['vmem_percent'] = sys_stat.vmem_percent
@@ -77,17 +80,23 @@ def server_usage():
             processes_data.append(status)
         data['processes'] = processes_data
 
+        date_time_data = []
         cpu_percent_data = []
         vmem_percent_data = []
+        swap_percent_data = []
         cpu_temp_data = []
-        date_time_data = []
-        for sys_stat in db_session.query(SystemStatus).filter_by(server=server).filter(func.DATE(SystemStatus.date_time) == datetime.datetime.utcnow().date()).order_by(SystemStatus.id):
-            date_time_data.append(sys_stat.date_time)
+        for sys_stat in db_session.query(SystemStatus).filter_by(server=server).filter(func.DATE(SystemStatus.date_time) >= last_2_hours).order_by(SystemStatus.id):
+            date_time_data.append("%s:%s" % (sys_stat.date_time.hour, sys_stat.date_time.minute))
             cpu_percent_data.append(sys_stat.cpu_percent)
             vmem_percent_data.append(sys_stat.vmem_percent)
+            swap_percent_data.append(sys_stat.swap_percent)
             cpu_temp_data.append(sys_stat.cpu_temp)
-        data['graphs_data'] = {'cpu_percent': cpu_percent_data, 'vmem_percent': vmem_percent_data, 'cpu_temp': cpu_temp_data, 'date_time': date_time_data}
 
+        data['graphs_data'] = {'cpu_percent': cpu_percent_data,
+                               'vmem_percent': vmem_percent_data,
+                               'swap_percent': swap_percent_data,
+                               'cpu_temp': cpu_temp_data,
+                               'date_time': date_time_data}
         return jsonify({'data': data}), 200
     except Exception, e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
@@ -155,9 +164,9 @@ def page_not_found(e):
 
 if __name__ == "__main__":
     # Parse options
-    parser = OptionParser()
-    parser.add_option('--debug', action='store_true', dest='debug', help='Print verbose output.', default=False)
-    options, args = parser.parse_args()
+    opts_parser = OptionParser()
+    opts_parser.add_option('--debug', action='store_true', dest='debug', help='Print verbose output.', default=False)
+    options, args = opts_parser.parse_args()
     if options.debug:
         logger.setLevel(logging.DEBUG)
         logger.debug('Enabled DEBUG logging level.')
