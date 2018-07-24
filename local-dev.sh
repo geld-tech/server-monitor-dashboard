@@ -20,7 +20,7 @@ find . -type f | xargs sed -i "s/__DATE__/01-01-1970/g"
 echo ""
 echo "### PYTHON FLAKE8 ###"
 cd server/
-flake8 . --show-source --max-line-length=159 --max-complexity=10 --statistics --count
+flake8 . --show-source --max-line-length=239 --max-complexity=10 --statistics --count
 cd ..
 
 # Build Vue application with DevTools enabled (Firefox or Chrome plugin)
