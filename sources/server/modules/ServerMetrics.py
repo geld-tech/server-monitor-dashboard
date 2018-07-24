@@ -248,13 +248,19 @@ class ServerMetrics:
     def get_swapdisk_usage(self):
         try:
             mem = psutil.swap_memory()
+
+            divisor = float(mem.total) * float(mem.used)
+            if divisor > 0:
+                percent = 100 / divisor
+            else:
+                percent = 0
+
             values = {'total': mem.total,
                       'used': mem.used,
                       'free': mem.free,
                       'sin': mem.sin,
                       'sout': mem.sout,
-                      'percent': 100 / float(mem.total) * float(mem.used),
-                      }
+                      'percent': percent}
             return values
         except Exception, e:
             self.logger.error('Error retrieving swap disk usage: %s' % e)
