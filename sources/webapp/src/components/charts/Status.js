@@ -44,13 +44,14 @@ export default {
       },
       {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        animation: false
       })
     }
   },
   watch: {
     graphs_data: function() {
-      this._chart.destroy()
+      this.$data._chart.destroy()
       this.renderLinesChart()
     }
   }
