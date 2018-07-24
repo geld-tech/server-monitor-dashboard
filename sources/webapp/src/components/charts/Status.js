@@ -39,13 +39,6 @@ export default {
             backgroundColor: chartColors.blue,
             borderColor: chartColors.blue,
             data: this.linesChartData.vmem_percent
-          },
-          {
-            label: 'Temperature',
-            fill: false,
-            backgroundColor: chartColors.yellow,
-            borderColor: chartColors.yellow,
-            data: this.linesChartData.cpu_temp
           }
         ]
       },
