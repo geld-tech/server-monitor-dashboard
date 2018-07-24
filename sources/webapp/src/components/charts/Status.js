@@ -14,35 +14,51 @@ export default {
   extends: Line,
   props: ['graphs_data'],
   mounted () {
-    this.renderChart({
-      labels: this.graphs_data.date_time,
-      datasets: [
-        {
-          label: 'CPU',
-          fill: false,
-          backgroundColor: chartColors.red,
-          borderColor: chartColors.red,
-          data: this.graphs_data.cpu_percent
-        },
-        {
-          label: 'Memory',
-          fill: false,
-          backgroundColor: chartColors.blue,
-          borderColor: chartColors.blue,
-          data: this.graphs_data.vmem_percent
-        },
-        {
-          label: 'Temperature',
-          fill: false,
-          backgroundColor: chartColors.yellow,
-          borderColor: chartColors.yellow,
-          data: this.graphs_data.cpu_temp
-        }
-      ]
-    },
-    {
-      responsive: true,
-      maintainAspectRatio: false
-    })
+    this.renderLinesChart()
+  },
+  computed: {
+    linesChartData: function() {
+      return this.graphs_data
+    }
+  },
+  methods: {
+    renderLinesChart: function() {
+      this.renderChart({
+        labels: this.linesChartData.date_time,
+        datasets: [
+          {
+            label: 'CPU',
+            fill: false,
+            backgroundColor: chartColors.red,
+            borderColor: chartColors.red,
+            data: this.linesChartData.cpu_percent
+          },
+          {
+            label: 'Memory',
+            fill: false,
+            backgroundColor: chartColors.blue,
+            borderColor: chartColors.blue,
+            data: this.linesChartData.vmem_percent
+          },
+          {
+            label: 'Temperature',
+            fill: false,
+            backgroundColor: chartColors.yellow,
+            borderColor: chartColors.yellow,
+            data: this.linesChartData.cpu_temp
+          }
+        ]
+      },
+      {
+        responsive: true,
+        maintainAspectRatio: false
+      })
+    }
+  },
+  watch: {
+    graphs_data: function() {
+      this._chart.destroy()
+      this.renderLinesChart()
+    }
   }
 }
