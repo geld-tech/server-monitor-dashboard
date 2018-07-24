@@ -61,7 +61,7 @@ def server_usage():
         data['disks_usage'] = server_metrics.get_disks_usage()
         data['swap_usage'] = server_metrics.get_swapdisk_usage()
 
-        sys_stat = db_session.query(SystemStatus).filter(func.DATE(SystemStatus.date_time) == datetime.date.today()).order_by(SystemStatus.id.desc()).first()
+        sys_stat = db_session.query(SystemStatus).filter(func.DATE(SystemStatus.date_time) == datetime.datetime.utcnow().date()).order_by(SystemStatus.id.desc()).first()
         if sys_stat:
             data['cpu_percent'] = sys_stat.cpu_percent
             data['vmem_percent'] = sys_stat.vmem_percent
@@ -81,7 +81,7 @@ def server_usage():
         vmem_percent_data = []
         cpu_temp_data = []
         date_time_data = []
-        for sys_stat in db_session.query(SystemStatus).filter_by(server=server).filter(func.DATE(SystemStatus.date_time) == datetime.date.today()).order_by(SystemStatus.id):
+        for sys_stat in db_session.query(SystemStatus).filter_by(server=server).filter(func.DATE(SystemStatus.date_time) == datetime.datetime.utcnow().date()).order_by(SystemStatus.id):
             date_time_data.append(sys_stat.date_time)
             cpu_percent_data.append(sys_stat.cpu_percent)
             vmem_percent_data.append(sys_stat.vmem_percent)
