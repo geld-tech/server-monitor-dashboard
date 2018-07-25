@@ -86,7 +86,7 @@ def server_usage():
         swap_percent_data = []
         cpu_temp_data = []
         for sys_stat in db_session.query(SystemStatus).filter_by(server=server).filter(func.DATE(SystemStatus.date_time) >= last_2_hours).order_by(SystemStatus.id):
-            date_time_data.append("%s:%s" % (sys_stat.date_time.hour, sys_stat.date_time.minute))
+            date_time_data.append(sys_stat.date_time.strftime("%H:%M"))
             cpu_percent_data.append(sys_stat.cpu_percent)
             vmem_percent_data.append(sys_stat.vmem_percent)
             swap_percent_data.append(sys_stat.swap_percent)
