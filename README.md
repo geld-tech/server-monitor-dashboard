@@ -9,7 +9,7 @@
 
 ## Description
 
-Server monitoring dashboard Web UI built with Python Flask and Vue.js
+Dashboard displaying server resources built with Python Flask, Vue.js, and Chart.js
 
 
 ## Demo

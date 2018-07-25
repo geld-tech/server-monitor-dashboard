@@ -28,7 +28,7 @@ cache:
 env:
   global:
   - PACKAGE_NAME=server-monitor-dashboard
-  - PACKAGE_DESC="Dashboard displaying server resources built with Flask and Vue.js"
+  - PACKAGE_DESC="Dashboard displaying server resources built with Python Flask, Vue.js, and Chart.js"
   - PACKAGE_AUTHOR=geld.tech
   - BINTRAY_REPO_NAME=debian
   - BINTRAY_LICENSE=Apache-2.0
