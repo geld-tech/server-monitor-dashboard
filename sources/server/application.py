@@ -49,7 +49,7 @@ def index():
 def server_usage():
     try:
         now = datetime.datetime.utcnow()
-        last_2_hours = now - datetime.timedelta(hours=24)
+        last_2_hours = now - datetime.timedelta(hours=2)
         data = {}
 
         hostname = server_metrics.get_server_hostname()
