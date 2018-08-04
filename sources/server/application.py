@@ -84,7 +84,12 @@ def server_usage():
         vmem_percent_data = []
         swap_percent_data = []
         cpu_temp_data = []
-        for sys_stat in db_session.query(SystemStatus).filter_by(server=server).filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date)).filter(func.time(SystemStatus.date_time).between(last_2_hours.time(), now.time())).order_by(SystemStatus.id):
+        query_result = db_session.query(SystemStatus)
+                       .filter_by(server=server)
+                       .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
+                       .filter(func.time(SystemStatus.date_time).between(last_2_hours.time(), now.time()))
+                       .order_by(SystemStatus.id)
+        for sys_stat in query_result:
             date_time_data.append(sys_stat.date_time.strftime("%H:%M"))
             cpu_percent_data.append(sys_stat.cpu_percent)
             vmem_percent_data.append(sys_stat.vmem_percent)
