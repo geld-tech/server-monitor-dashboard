@@ -49,6 +49,7 @@ def server_usage():
     try:
         now = datetime.datetime.utcnow()
         last_2_hours = now - datetime.timedelta(hours=2)
+        last_5_mins = now - datetime.timedelta(minutes=5)
         data = {}
 
         hostname = server_metrics.get_server_hostname()
@@ -69,8 +70,9 @@ def server_usage():
             data['vmem_percent'] = current_stat.vmem_percent
             data['cpu_temp'] = current_stat.cpu_temp
 
+        processes_result db_session.query(Process).filter_by(server=server).filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date)).filter(func.time(SystemStatus.date_time).between(last_5_mins.time(), now.time())).order_by(Process.id)
         processes_data = []
-        for proc_status in db_session.query(Process).filter_by(server=server).order_by(Process.id):
+        for proc_status in processes_result:
             status = {}
             status['pid'] = proc_status.pid
             status['name'] = proc_status.name
