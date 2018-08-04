@@ -63,11 +63,11 @@ def server_usage():
         data['disks_usage'] = server_metrics.get_disks_usage()
         data['swap_usage'] = server_metrics.get_swapdisk_usage()
 
-        sys_stat = db_session.query(SystemStatus).filter(func.DATE(SystemStatus.date_time) == now.date()).order_by(SystemStatus.id.desc()).first()
-        if sys_stat:
-            data['cpu_percent'] = sys_stat.cpu_percent
-            data['vmem_percent'] = sys_stat.vmem_percent
-            data['cpu_temp'] = sys_stat.cpu_temp
+        current_stat = db_session.query(SystemStatus).filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date)).order_by(SystemStatus.id.desc()).first()
+        if current_stat:
+            data['cpu_percent'] = current_stat.cpu_percent
+            data['vmem_percent'] = current_stat.vmem_percent
+            data['cpu_temp'] = current_stat.cpu_temp
 
         processes_data = []
         for proc_status in db_session.query(Process).filter_by(server=server).order_by(Process.id):
@@ -84,12 +84,12 @@ def server_usage():
         vmem_percent_data = []
         swap_percent_data = []
         cpu_temp_data = []
-        query_result = db_session.query(SystemStatus)
+        system_status_result = db_session.query(SystemStatus)
                        .filter_by(server=server)
                        .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
                        .filter(func.time(SystemStatus.date_time).between(last_2_hours.time(), now.time()))
                        .order_by(SystemStatus.id)
-        for sys_stat in query_result:
+        for sys_stat in system_status_result:
             date_time_data.append(sys_stat.date_time.strftime("%H:%M"))
             cpu_percent_data.append(sys_stat.cpu_percent)
             vmem_percent_data.append(sys_stat.vmem_percent)
