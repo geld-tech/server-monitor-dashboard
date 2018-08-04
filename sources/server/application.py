@@ -70,7 +70,13 @@ def server_usage():
             data['vmem_percent'] = current_stat.vmem_percent
             data['cpu_temp'] = current_stat.cpu_temp
 
-        processes_result db_session.query(Process).filter_by(server=server).filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date)).filter(func.time(SystemStatus.date_time).between(last_5_mins.time(), now.time())).order_by(Process.id)
+        processes_result = (
+            db_session.query(Process)
+            .filter_by(server=server)
+            .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
+            .filter(func.time(SystemStatus.date_time).between(last_5_mins.time(), now.time()))
+            .order_by(Process.id)
+        )
         processes_data = []
         for proc_status in processes_result:
             status = {}
