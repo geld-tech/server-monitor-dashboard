@@ -85,6 +85,7 @@ def server_usage():
             .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
             .filter(func.time(SystemStatus.date_time).between(last_5_mins.time(), now.time()))
             .order_by(Process.id)
+            .limit(12)
         )
         processes_data = []
         for proc_status in processes_result:
