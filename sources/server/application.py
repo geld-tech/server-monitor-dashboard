@@ -14,7 +14,7 @@ from flask import Flask, render_template, jsonify
 from modules.ServerMetrics import ServerMetrics
 from modules.Models import Base, Server, SystemInformation, SystemStatus, Process
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
@@ -63,7 +63,7 @@ def server_usage():
         data['disks_usage'] = server_metrics.get_disks_usage()
         data['swap_usage'] = server_metrics.get_swapdisk_usage()
 
-        sys_stat = db_session.query(SystemStatus).filter(SystemStatus.date_time == now.date()).order_by(SystemStatus.id.desc()).first()
+        sys_stat = db_session.query(SystemStatus).filter(func.DATE(SystemStatus.date_time) == now.date()).order_by(SystemStatus.id.desc()).first()
         if sys_stat:
             data['cpu_percent'] = sys_stat.cpu_percent
             data['vmem_percent'] = sys_stat.vmem_percent
