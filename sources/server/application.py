@@ -93,7 +93,7 @@ def server_usage():
             status = {}
             status['pid'] = proc_status.pid
             status['name'] = proc_status.name
-            status['cpu_percent'] = round(proc_status.cpu_percent,1)
+            status['cpu_percent'] = round(proc_status.cpu_percent, 1)
             status['date_time'] = proc_status.date_time
             processes_data.append(status)
         data['processes'] = processes_data
