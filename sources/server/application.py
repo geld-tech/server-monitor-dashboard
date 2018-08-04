@@ -67,7 +67,12 @@ def server_usage():
         data['swap_usage'] = server_metrics.get_swapdisk_usage()
 
         # Query metrics for latest resources usage
-        current_stat = db_session.query(SystemStatus).filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date)).order_by(SystemStatus.id.desc()).first()
+        current_stat = (
+            db_session.query(SystemStatus)
+            .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
+            .order_by(SystemStatus.id.desc())
+            .first()
+        )
         if current_stat:
             data['cpu_percent'] = current_stat.cpu_percent
             data['vmem_percent'] = current_stat.vmem_percent
