@@ -80,11 +80,12 @@ def server_usage():
 
         # Query metrics for processes data to add to table
         processes_result = (
-            db_session.query(Process)
+            db_session.query(Process.pid, Process.name, func.avg(Process.cpu_percent).label('cpu_percent'), Process.date_time)
             .filter_by(server=server)
             .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
             .filter(func.time(SystemStatus.date_time).between(last_5_mins.time(), now.time()))
-            .order_by(Process.id)
+            .group_by(Process.pid)
+            .order_by(Process.pid)
             .limit(12)
         )
         processes_data = []
@@ -92,7 +93,7 @@ def server_usage():
             status = {}
             status['pid'] = proc_status.pid
             status['name'] = proc_status.name
-            status['cpu_percent'] = proc_status.cpu_percent
+            status['cpu_percent'] = round(proc_status.cpu_percent,1)
             status['date_time'] = proc_status.date_time
             processes_data.append(status)
         data['processes'] = processes_data
