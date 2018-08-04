@@ -52,9 +52,11 @@ def server_usage():
         last_5_mins = now - datetime.timedelta(minutes=5)
         data = {}
 
+        # Identify current server
         hostname = server_metrics.get_server_hostname()
         server = db_session.query(Server).filter_by(hostname=hostname).first()
 
+        # Retrieve current system information
         data['hostname'] = hostname
         data['platform'] = server_metrics.get_server_platform()
         data['system'] = server_metrics.get_server_system()
@@ -64,12 +66,14 @@ def server_usage():
         data['disks_usage'] = server_metrics.get_disks_usage()
         data['swap_usage'] = server_metrics.get_swapdisk_usage()
 
+        # Query metrics for latest resources usage
         current_stat = db_session.query(SystemStatus).filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date)).order_by(SystemStatus.id.desc()).first()
         if current_stat:
             data['cpu_percent'] = current_stat.cpu_percent
             data['vmem_percent'] = current_stat.vmem_percent
             data['cpu_temp'] = current_stat.cpu_temp
 
+        # Query metrics for processes data to add to table
         processes_result = (
             db_session.query(Process)
             .filter_by(server=server)
@@ -87,6 +91,7 @@ def server_usage():
             processes_data.append(status)
         data['processes'] = processes_data
 
+        # Query metrics for system status to plot in graphs
         system_status_result = (
             db_session.query(SystemStatus)
             .filter_by(server=server)
@@ -102,6 +107,7 @@ def server_usage():
             swap_percent_data.append(sys_stat.swap_percent)
             cpu_temp_data.append(sys_stat.cpu_temp)
 
+        # Format response data to be ingested in client side
         data['graphs_data'] = {'cpu_percent': cpu_percent_data,
                                'vmem_percent': vmem_percent_data,
                                'swap_percent': swap_percent_data,
