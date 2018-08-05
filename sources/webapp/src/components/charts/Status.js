@@ -45,7 +45,15 @@ export default {
       {
         responsive: true,
         maintainAspectRatio: false,
-        animation: false
+        animation: false,
+        scales: {
+          xAxes: [{
+            ticks: {
+              autoSkip: true,
+              maxTicksLimit: 12
+            }
+          }]
+        }
       })
     }
   },
