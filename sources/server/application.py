@@ -104,7 +104,7 @@ def server_usage():
             .filter_by(server=server)
             .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
             .filter(func.time(SystemStatus.date_time).between(last_2_hours.time(), now.time()))
-            .order_by(SystemStatus.id)
+            .order_by(SystemStatus.date_time)
         )
         date_time_data, cpu_percent_data, vmem_percent_data, swap_percent_data, cpu_temp_data = [], [], [], [], []
         for sys_stat in system_status_result:
