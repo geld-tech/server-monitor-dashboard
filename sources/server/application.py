@@ -18,7 +18,7 @@ from sqlalchemy import cast, create_engine, Date, func
 from sqlalchemy.orm import sessionmaker
 
 app = Flask(__name__)
-app.debug = True
+app.debug = False
 
 # Global config for API URLs and Tokens
 config = ConfigParser.ConfigParser()
