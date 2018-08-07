@@ -144,24 +144,6 @@ def server_information():
         return jsonify({'data': {}, 'error': 'Could not retrieve server resources status, check logs for more details..'}), 500
 
 
-@app.route("/server/hostname")
-def server_hostname():
-    hostname = server_metrics.get_server_hostname()
-    if hostname:
-        return jsonify({'hostname': hostname}), 200
-    else:
-        return jsonify({"cpu_temp": "localhost", "error": "Couldn't read hostname, check logs for more details.."}), 500
-
-
-@app.route("/server/temperature")
-def server_temperature():
-    cpu_temp = server_metrics.get_server_temperature()
-    if cpu_temp:
-        return jsonify({'cpu_temp': cpu_temp}), 200
-    else:
-        return jsonify({"cpu_temp": "-273.15", "error": "Couldn't read temperature, check logs for more details.."}), 500
-
-
 @app.errorhandler(404)
 def page_not_found(e):
     return jsonify({"data": "not found", "error": "resource not found"}), 404
