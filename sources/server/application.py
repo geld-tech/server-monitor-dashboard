@@ -14,11 +14,8 @@ from flask import Flask, render_template, jsonify
 from modules.ServerMetrics import ServerMetrics
 from modules.Models import Base, Server, SystemInformation, SystemStatus, Process
 
-from sqlalchemy import cast, create_engine, Date, func
-from sqlalchemy.orm import sessionmaker
-
-app = Flask(__name__)
-app.debug = False
+from sqlalchemy import cast, Date, func
+from flask_sqlalchemy import SQLAlchemy
 
 # Global config for API URLs and Tokens
 config = ConfigParser.ConfigParser()
@@ -28,14 +25,20 @@ config.readfp(open('config/settings.cfg'))
 logging.basicConfig(format='[%(asctime)-15s] [%(threadName)s] %(levelname)s %(message)s', level=logging.INFO)
 logger = logging.getLogger('root')
 
-server_metrics = ServerMetrics()
+# Flask Application
+app = Flask(__name__)
+app.debug = False
 
 # DB Session
 db_path = '/dev/shm/monitor-collectord.sqlite3'
-engine = create_engine('sqlite:///'+db_path)
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-db_session = DBSession()
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+db_path
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+
+@app.before_first_request
+def setup():
+    Base.metadata.bind = db.engine
 
 
 @app.route("/")
@@ -47,6 +50,7 @@ def index():
 @app.route("/server/usage", strict_slashes=False)
 def server_usage():
     try:
+        server_metrics = ServerMetrics()
         now = datetime.datetime.utcnow()
         last_2_hours = now - datetime.timedelta(hours=2)
         last_5_mins = now - datetime.timedelta(minutes=5)
@@ -54,7 +58,7 @@ def server_usage():
 
         # Identify current server
         hostname = server_metrics.get_server_hostname()
-        server = db_session.query(Server).filter_by(hostname=hostname).first()
+        server = db.session.query(Server).filter_by(hostname=hostname).first()
 
         # Retrieve current system information
         data['hostname'] = hostname
@@ -68,7 +72,7 @@ def server_usage():
 
         # Query metrics for latest resources usage
         current_stat = (
-            db_session.query(SystemStatus)
+            db.session.query(SystemStatus)
             .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
             .order_by(SystemStatus.id.desc())
             .first()
@@ -80,7 +84,7 @@ def server_usage():
 
         # Query metrics for processes data to add to table
         processes_result = (
-            db_session.query(Process.pid, Process.name, func.avg(Process.cpu_percent).label('cpu_percent'), Process.date_time)
+            db.session.query(Process.pid, Process.name, func.avg(Process.cpu_percent).label('cpu_percent'), Process.date_time)
             .filter_by(server=server)
             .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
             .filter(func.time(SystemStatus.date_time).between(last_5_mins.time(), now.time()))
@@ -100,7 +104,7 @@ def server_usage():
 
         # Query metrics for system status to plot in graphs
         system_status_result = (
-            db_session.query(SystemStatus)
+            db.session.query(SystemStatus)
             .filter_by(server=server)
             .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
             .filter(func.time(SystemStatus.date_time).between(last_2_hours.time(), now.time()))
@@ -130,9 +134,10 @@ def server_usage():
 @app.route("/server/information", strict_slashes=False)
 def server_information():
     try:
+        server_metrics = ServerMetrics()
         data = []
-        server = db_session.query(Server).filter_by(hostname=server_metrics.get_server_hostname())[0]
-        for sys_info in db_session.query(SystemInformation).filter_by(server=server):
+        server = db.session.query(Server).filter_by(hostname=server_metrics.get_server_hostname())[0]
+        for sys_info in db.session.query(SystemInformation).filter_by(server=server):
             status = {}
             status['platform'] = sys_info.platform
             status['system'] = sys_info.system
