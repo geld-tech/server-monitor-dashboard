@@ -57,6 +57,15 @@ export default {
               autoSkip: true,
               maxTicksLimit: 12
             }
+          }],
+          yAxes: [{
+            display: true,
+            ticks: {
+              beginAtZero: true,
+              steps: 10,
+              stepValue: 10,
+              max: 100
+            }
           }]
         }
       })
