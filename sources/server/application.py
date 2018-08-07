@@ -35,6 +35,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+server_metrics = ServerMetrics()
+
 
 @app.before_first_request
 def setup():
@@ -50,7 +52,6 @@ def index():
 @app.route("/server/usage", strict_slashes=False)
 def server_usage():
     try:
-        server_metrics = ServerMetrics()
         now = datetime.datetime.utcnow()
         last_2_hours = now - datetime.timedelta(hours=2)
         last_5_mins = now - datetime.timedelta(minutes=5)
@@ -133,7 +134,6 @@ def server_usage():
 @app.route("/server/information", strict_slashes=False)
 def server_information():
     try:
-        server_metrics = ServerMetrics()
         data = []
         server = db.session.query(Server).filter_by(hostname=server_metrics.get_server_hostname())[0]
         for sys_info in db.session.query(SystemInformation).filter_by(server=server):
