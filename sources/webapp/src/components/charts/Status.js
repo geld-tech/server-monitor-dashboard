@@ -43,9 +43,14 @@ export default {
         ]
       },
       {
-        responsive: true,
         maintainAspectRatio: false,
+        responsive: true,
         animation: false,
+        elements: {
+          point: {
+            radius: 0
+          }
+        },
         scales: {
           xAxes: [{
             ticks: {
