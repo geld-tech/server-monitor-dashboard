@@ -1,5 +1,5 @@
 import datetime
-from sqlalchemy import Column, ForeignKey, Integer, Float, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, BigInteger, Float, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -30,6 +30,7 @@ class SystemStatus(Base):
     swap_percent = Column(Float)
     cpu_temp = Column(Float)
     date_time = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
+    timestamp = Column(BigInteger)
     server_id = Column(Integer, ForeignKey('server.id'))
     server = relationship(Server)
 
@@ -41,5 +42,6 @@ class Process(Base):
     name = Column(String(1024))
     cpu_percent = Column(Float)
     date_time = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
+    timestamp = Column(BigInteger)
     server_id = Column(Integer, ForeignKey('server.id'))
     server = relationship(Server)

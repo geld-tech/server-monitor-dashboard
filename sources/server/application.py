@@ -87,8 +87,7 @@ def server_usage():
         processes_result = (
             db.session.query(Process.pid, Process.name, func.avg(Process.cpu_percent).label('cpu_percent'), Process.date_time)
             .filter_by(server=server)
-            .filter(cast(SystemStatus.date_time, Date) == cast(now.date(), Date))
-            .filter(func.time(SystemStatus.date_time).between(last_5_mins.time(), now.time()))
+            .filter(SystemStatus.timestamp >= last_5_mins.strftime('%s'))
             .group_by(Process.pid)
             .order_by(Process.pid)
             .limit(12)
@@ -107,7 +106,7 @@ def server_usage():
         system_status_result = (
             db.session.query(SystemStatus)
             .filter_by(server=server)
-            .filter(SystemStatus.date_time >= last_2_hours.strftime('%Y-%d-%m %H:%M:%S'))
+            .filter(SystemStatus.timestamp >= last_2_hours.strftime('%s'))
             .order_by(SystemStatus.date_time)
         )
         date_time_data, cpu_percent_data, vmem_percent_data, swap_percent_data, cpu_temp_data = [], [], [], [], []

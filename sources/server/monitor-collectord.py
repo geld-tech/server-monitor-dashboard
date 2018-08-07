@@ -34,10 +34,10 @@ class MetricsCollector():
         self.store_system_information(data)
         while True:
             # Poll and store
-            ts = datetime.datetime.utcnow()
+            dt = datetime.datetime.utcnow()
             data = sm.poll_metrics()
-            self.store_system_status(ts, data)
-            self.store_processes(ts, data)
+            self.store_system_status(dt, data)
+            self.store_processes(dt, data)
             time.sleep(self.poll_interval)
 
     def db_open(self, hostname='localhost'):
@@ -66,23 +66,25 @@ class MetricsCollector():
         self.db_session.add(sys_info)
         self.db_session.commit()
 
-    def store_system_status(self, timestamp, data):
+    def store_system_status(self, date_time, data):
         sys_status = SystemStatus(cpu_percent=data['cpu_percent'],
                                   vmem_percent=data['vmem_percent'],
                                   cpu_temp=data['cpu_temp'],
                                   swap_percent=data['swap_usage']['percent'],
-                                  date_time=timestamp,
+                                  date_time=date_time,
+                                  timestamp=date_time.strftime('%s'),
                                   server=self.server)
         self.db_session.add(sys_status)
         self.db_session.commit()
 
-    def store_processes(self, timestamp, data):
+    def store_processes(self, date_time, data):
         for proc in data['processes']:
             if proc['cpu_percent'] > 0.9:  # Won't store irrelevant information
                 process = Process(pid=proc['pid'],
                                   name=proc['name'],
                                   cpu_percent=proc['cpu_percent'],
-                                  date_time=timestamp,
+                                  date_time=date_time,
+                                  timestamp=date_time.strftime('%s'),
                                   server=self.server)
                 self.db_session.add(process)
                 self.db_session.commit()
